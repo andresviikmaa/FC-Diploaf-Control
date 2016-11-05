@@ -10,15 +10,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ControlCentrer
-{
-    public partial class Form1 : Form
-    {
+namespace ControlCentrer {
+    public partial class Form1 : Form {
         private bool closePending;
-
         Pen myPen = new Pen(Color.Red);
         Graphics formGraphics;
         SolidBrush myBrush = new SolidBrush(System.Drawing.Color.Red);
+        SolidBrush BlueBrush = new SolidBrush(System.Drawing.Color.Blue);
+        SolidBrush YellowBrush = new SolidBrush(System.Drawing.Color.Yellow);
         int fieldX;
         int fieldY;
         Bitmap field1 = new Bitmap(Properties.Resources.field2);
@@ -26,36 +25,58 @@ namespace ControlCentrer
         bool bMaster = true;
         bool restart = false;
         bool online = false;
-        public Form1()
-        {
+        UdpClient udpSender = new UdpClient();
+        IPEndPoint target;
+
+        private readonly object syncLock = new object();
+        string command = "";
+        public Form1() {
             InitializeComponent();
 
             backgroundWorker1.RunWorkerAsync(null);
 
             formGraphics = this.panel1.CreateGraphics();
-            fieldX = 304;
-            fieldY = 202;
+            fieldX = this.panel1.Width/2;
+            fieldY = this.panel1.Height / 2;
         }
-
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Loopback, 0);
-            using (var udpClient = new UdpClient(31000 + (bMaster ? 1 : 0)))
+            using (var udpClient = new UdpClient(30000 + (bMaster ? 0 : 1)))
             {
                 udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 1000);
+                FieldState field = new FieldState();
 
-                while (!worker.CancellationPending)
+                while(!worker.CancellationPending)
                 {
                     try
                     {
+                        lock(syncLock) {
+                            if(command != "") {
+                                udpClient.Send(Encoding.ASCII.GetBytes(command), command.Length, remoteEndPoint);
+                                command = "";
+                            };
+                        }
+
                         var buffer = udpClient.Receive(ref remoteEndPoint);
-                        var msg = System.Text.Encoding.ASCII.GetString(buffer);
-                        worker.ReportProgress(0, msg);
+                        long size = BitConverter.ToInt32(buffer, 0);
+                        field.parse(buffer);
+
+                        if(size != 1600) {
+                            worker.ReportProgress(0, "invalid field state received");
+                        }
+                        lock(syncLock) {
+                            command = "Give me money";
+                        }
+
+                        worker.ReportProgress(0, field);
                         if (!online)
                         {
                             online = true;
                             pnlOnline.BackColor = Color.Green;
+                            worker.ReportProgress(0, remoteEndPoint);
+
                         }
                     }
                     catch (SocketException)
@@ -64,6 +85,7 @@ namespace ControlCentrer
                         {
                             online = false;
                             pnlOnline.BackColor = Color.Red;
+                            worker.ReportProgress(0, remoteEndPoint);
                         }
                         ;
                     }
@@ -94,20 +116,44 @@ namespace ControlCentrer
             bool flipped = Tag.ToString() == "1";
             formGraphics.DrawImage(flipped ? field1 : field2, new Point(0,0));
             //panel1.Invalidate();
-            string data = e.UserState as String;
-            var items = data.Split(" ".ToCharArray());
-            if (items[0] == "STT")
-            {
-                int ballCount = Int32.Parse(items[1]);
-                for (int i = 0; i < ballCount; i++)
-                {
-                    drawBall(new Random().Next(1, 30) + fieldX + Int32.Parse(items[i * 2 + 3]), fieldY + Int32.Parse(items[i * 2 + 2]));
+            if(e.UserState is FieldState) {
+                drawBall(fieldX, fieldY, BlueBrush);
+
+                var state = e.UserState as FieldState;
+                txtBallCount.Text = state.ballCount.ToString();
+                if(state.blueGate.objectPos.isValid) {
+                    int p1 = (int)(state.blueGate.objectPos.rawPixelCoords.x / 3);
+                    int p2 = (int)(state.blueGate.objectPos.rawPixelCoords.y / 3);
+                    drawBall(fieldX + p1, fieldY + p2, BlueBrush);
+                }
+                if(state.yellowGate.objectPos.isValid) {
+                    int p1 = (int)(state.yellowGate.objectPos.rawPixelCoords.x / 3);
+                    int p2 = (int)(state.yellowGate.objectPos.rawPixelCoords.y / 3);
+                    drawBall(fieldX + p1, fieldY + p2, YellowBrush);
+                }
+                for(int i = 0; i < state.ballCount; i++) {
+                    if(tabControl1.SelectedTab == tabPage1) {
+                        int p1 = (int)(state.balls[i].objectPos.rawPixelCoords.x/3);
+                        int p2 = (int)(state.balls[i].objectPos.rawPixelCoords.y/3);
+                        drawBall(fieldX + p1, fieldY + p2, myBrush);
+                    }
+                    if(tabControl1.SelectedTab == tabPage3) {
+                        int p1 = (int)state.balls[i].objectPos.fieldCoords.y;
+                        int p2 = (int)state.balls[i].objectPos.fieldCoords.x;
+                        drawBall(fieldX + p1, fieldY + p2, myBrush);
+                    }
+                }
+            } else if(e.UserState is IPEndPoint){
+                var remoteEndPoint = e.UserState as IPEndPoint;
+                textBox1.Text = "Data received from " + remoteEndPoint.Address.ToString();
+                if(target == null) {
+                    target = new IPEndPoint(remoteEndPoint.Address, 30000 + (bMaster ? 1 : 0));
                 }
             }
 
         }
 
-        private void drawBall(int p1, int p2)
+        private void drawBall(int p1, int p2, SolidBrush myBrush)
         {
             //throw new NotImplementedException();
             formGraphics.FillEllipse(myBrush, new Rectangle(p1, p2, 10, 10));
@@ -115,7 +161,10 @@ namespace ControlCentrer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            formGraphics.FillEllipse(myBrush, new Rectangle(0, 0, 200, 300));
+            if(target != null) {
+                command = "Give me money\0";
+                udpSender.Send(Encoding.ASCII.GetBytes(command), command.Length, target);
+            }
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -141,6 +190,10 @@ namespace ControlCentrer
             bMaster = (sender as RadioButton).Tag.ToString() == "1";
             backgroundWorker1.CancelAsync();
             restart = true;
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e) {
+            ;
         }
     }
 }
