@@ -26,7 +26,8 @@ namespace ControlCentrer {
         bool bMaster = true;
         bool restart = false;
         bool online = false;
-        UdpClient udpSender = new UdpClient();
+        UdpClient udpMaster = new UdpClient();
+        UdpClient udpSlave = new UdpClient();
         IPEndPoint target;
 
         private readonly object syncLock = new object();
@@ -170,10 +171,16 @@ namespace ControlCentrer {
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(target != null) {
-                command = "Give me money\0";
-                udpSender.Send(Encoding.ASCII.GetBytes(command), command.Length, target);
-            }
+            string mode ="";
+            if (rbManual.Checked) mode = "manual";
+            if (rb1vs1.Checked) mode = "1vs1";
+            if (rbManual.Checked) mode = "2vs2";
+
+            Send(110,mode);
+            Button launch = sender as Button;
+            string newLabel = launch.Tag as String;
+            launch.Tag = launch.Text;
+            launch.Text = newLabel;
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -207,6 +214,22 @@ namespace ControlCentrer {
 
         private void button3_Click(object sender, EventArgs e) {
             Close();
+        }
+
+        private void radioButton11_CheckedChanged(object sender, EventArgs e)
+        {
+        }
+        private void Send(int command, string data)
+        {
+            string buffer = "";
+            if (rbMaster.Checked || rbBoth.Checked)
+            {
+                udpMaster.Send(Encoding.ASCII.GetBytes(buffer), buffer.Length, target);
+            }
+            if (rbSlave.Checked || rbBoth.Checked)
+            {
+                udpSlave.Send(Encoding.ASCII.GetBytes(buffer), buffer.Length, target);
+            }
         }
     }
 }
