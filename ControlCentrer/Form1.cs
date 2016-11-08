@@ -18,6 +18,7 @@ namespace ControlCentrer {
         SolidBrush myBrush = new SolidBrush(System.Drawing.Color.Red);
         SolidBrush BlueBrush = new SolidBrush(System.Drawing.Color.Blue);
         SolidBrush YellowBrush = new SolidBrush(System.Drawing.Color.Yellow);
+        SolidBrush GreenBrush = new SolidBrush(System.Drawing.Color.Green);
         int fieldX;
         int fieldY;
         Bitmap field1 = new Bitmap(Properties.Resources.field2);
@@ -114,7 +115,11 @@ namespace ControlCentrer {
         private void backgroundWorker1_ProgressChanged_1(object sender, ProgressChangedEventArgs e)
         {
             bool flipped = Tag.ToString() == "1";
-            formGraphics.DrawImage(flipped ? field1 : field2, new Point(0,0));
+            if(tabControl1.SelectedTab == tabPage1) {
+                formGraphics.FillRectangle(GreenBrush, new Rectangle(0, 0, panel1.Width, panel1.Height));
+            } else if(tabControl1.SelectedTab == tabPage3) {
+                formGraphics.DrawImage(flipped ? field1 : field2, new Point(0, 0));
+            }
             //panel1.Invalidate();
             if(e.UserState is FieldState) {
                 drawBall(fieldX, fieldY, BlueBrush);
@@ -122,14 +127,18 @@ namespace ControlCentrer {
                 var state = e.UserState as FieldState;
                 txtBallCount.Text = state.ballCount.ToString();
                 if(state.blueGate.objectPos.isValid) {
-                    int p1 = (int)(state.blueGate.objectPos.rawPixelCoords.x / 3);
-                    int p2 = (int)(state.blueGate.objectPos.rawPixelCoords.y / 3);
-                    drawBall(fieldX + p1, fieldY + p2, BlueBrush);
+                    if(tabControl1.SelectedTab == tabPage1) {
+                        int p1 = (int)(state.blueGate.objectPos.rawPixelCoords.x / 3);
+                        int p2 = (int)(state.blueGate.objectPos.rawPixelCoords.y / 3);
+                        drawBall(fieldX + p1, fieldY + p2, BlueBrush);
+                    }
                 }
                 if(state.yellowGate.objectPos.isValid) {
-                    int p1 = (int)(state.yellowGate.objectPos.rawPixelCoords.x / 3);
-                    int p2 = (int)(state.yellowGate.objectPos.rawPixelCoords.y / 3);
-                    drawBall(fieldX + p1, fieldY + p2, YellowBrush);
+                    if(tabControl1.SelectedTab == tabPage1) {
+                        int p1 = (int)(state.yellowGate.objectPos.rawPixelCoords.x / 3);
+                        int p2 = (int)(state.yellowGate.objectPos.rawPixelCoords.y / 3);
+                        drawBall(fieldX + p1, fieldY + p2, YellowBrush);
+                    }
                 }
                 for(int i = 0; i < state.ballCount; i++) {
                     if(tabControl1.SelectedTab == tabPage1) {
@@ -194,6 +203,10 @@ namespace ControlCentrer {
 
         private void Form1_KeyDown(object sender, KeyEventArgs e) {
             ;
+        }
+
+        private void button3_Click(object sender, EventArgs e) {
+            Close();
         }
     }
 }
