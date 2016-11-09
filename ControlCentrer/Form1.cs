@@ -29,7 +29,14 @@ namespace ControlCentrer {
         UdpClient udpMaster = new UdpClient();
         UdpClient udpSlave = new UdpClient();
         IPEndPoint target;
-
+        ManualControl frmManual;
+        public enum COMMAND
+        {
+            STATE = 0,
+            SET_PLAY_MODE,
+            MANUAL_CONTROL,
+        }
+        
         private readonly object syncLock = new object();
         string command = "";
         public Form1() {
@@ -176,11 +183,26 @@ namespace ControlCentrer {
             if (rb1vs1.Checked) mode = "1vs1";
             if (rbManual.Checked) mode = "2vs2";
 
-            Send(110,mode);
             Button launch = sender as Button;
             string newLabel = launch.Tag as String;
             launch.Tag = launch.Text;
             launch.Text = newLabel;
+            if(launch.Text == "STOP")
+            {
+                mode = "idle";
+            }
+            Send(COMMAND.SET_PLAY_MODE, mode);
+            if (mode == "manual")
+            {
+
+                frmManual = new ManualControl();
+                frmManual.KeyUp += delegate (object sender2, KeyEventArgs e2)
+                {
+                    Send(COMMAND.MANUAL_CONTROL, e2.KeyCode.ToString());
+                };
+                frmManual.Show();
+            }
+            
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -219,16 +241,19 @@ namespace ControlCentrer {
         private void radioButton11_CheckedChanged(object sender, EventArgs e)
         {
         }
-        private void Send(int command, string data)
+        private void Send(COMMAND command, string data)
         {
-            string buffer = "";
+            if (target == null) return;
+            
+            byte[] buffer = Encoding.ASCII.GetBytes(" "+data);
+            buffer[0] = (byte)command;
             if (rbMaster.Checked || rbBoth.Checked)
             {
-                udpMaster.Send(Encoding.ASCII.GetBytes(buffer), buffer.Length, target);
+                udpMaster.Send(buffer, buffer.Length, target);
             }
             if (rbSlave.Checked || rbBoth.Checked)
             {
-                udpSlave.Send(Encoding.ASCII.GetBytes(buffer), buffer.Length, target);
+                udpSlave.Send(buffer, buffer.Length, target);
             }
         }
     }
