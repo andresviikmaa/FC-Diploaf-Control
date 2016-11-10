@@ -12,7 +12,7 @@ namespace ControlCentrer
 {
     public partial class ManualControl : Form
     {
-       // public event EventHandler<KeyEventArgs> KeyUpEvent = delegate { };
+        public event EventHandler<KeyEventArgs> KeyUpEvent = delegate { };
 
         public ManualControl()
         {
@@ -26,7 +26,7 @@ namespace ControlCentrer
 
         private void ManualControl_KeyDown(object sender, KeyEventArgs e)
         {
-            ;
+            KeyUpEvent(sender, e);
         }
     }
 

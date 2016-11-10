@@ -94,19 +94,20 @@ namespace ControlCentrer {
         }
 
         public void parse(byte[] buffer){
-            gameMode = buffer[4];
-            robotColor = buffer[5];
-            isPlaying = BitConverter.ToBoolean(buffer, 6);
-            collisionWithBorder = BitConverter.ToBoolean(buffer, 7);
-            collisionWithUnknown = BitConverter.ToBoolean(buffer, 8);
-            obstacleNearBall = BitConverter.ToBoolean(buffer, 9);
-            gateObstructed = BitConverter.ToBoolean(buffer, 10);
-            targetGate = buffer[11];
-            homeGate = buffer[12];
-            ballCount = buffer[13];
-            closestBall = buffer[14];
-            closestBallInFront = buffer[15];
-            int startIndex = 16;
+            int startIndex = 8;
+            gameMode = buffer[startIndex + 0];
+            robotColor = buffer[startIndex + 1];
+            isPlaying = BitConverter.ToBoolean(buffer, startIndex + 2);
+            collisionWithBorder = BitConverter.ToBoolean(buffer, startIndex + 3);
+            collisionWithUnknown = BitConverter.ToBoolean(buffer, startIndex + 4);
+            obstacleNearBall = BitConverter.ToBoolean(buffer, startIndex + 5);
+            gateObstructed = BitConverter.ToBoolean(buffer, startIndex + 6);
+            targetGate = buffer[startIndex + 7];
+            homeGate = buffer[startIndex + 8];
+            ballCount = buffer[startIndex + 9];
+            closestBall = buffer[startIndex + 10];
+            closestBallInFront = buffer[startIndex + 11];
+            startIndex = 24;
             partner.parse(buffer, ref startIndex); //+ 80
             self.parse(buffer, ref startIndex);
             blueGate.parse(buffer, ref startIndex);

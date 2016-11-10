@@ -61,13 +61,6 @@ namespace ControlCentrer {
                 {
                     try
                     {
-                        lock(syncLock) {
-                            if(command != "") {
-                                udpClient.Send(Encoding.ASCII.GetBytes(command), command.Length, remoteEndPoint);
-                                command = "";
-                            };
-                        }
-
                         var buffer = udpClient.Receive(ref remoteEndPoint);
                         long size = BitConverter.ToInt32(buffer, 0);
                         field.parse(buffer);
@@ -181,13 +174,13 @@ namespace ControlCentrer {
             string mode ="";
             if (rbManual.Checked) mode = "manual";
             if (rb1vs1.Checked) mode = "1vs1";
-            if (rbManual.Checked) mode = "2vs2";
+            if (rb2vs2.Checked) mode = "2vs2";
 
             Button launch = sender as Button;
             string newLabel = launch.Tag as String;
             launch.Tag = launch.Text;
             launch.Text = newLabel;
-            if(launch.Text == "STOP")
+            if(launch.Text != "STOP")
             {
                 mode = "idle";
             }
@@ -196,11 +189,14 @@ namespace ControlCentrer {
             {
 
                 frmManual = new ManualControl();
-                frmManual.KeyUp += delegate (object sender2, KeyEventArgs e2)
+                frmManual.KeyUpEvent += delegate (object sender2, KeyEventArgs e2)
                 {
                     Send(COMMAND.MANUAL_CONTROL, e2.KeyCode.ToString());
                 };
-                frmManual.Show();
+                frmManual.Closed += delegate (object sender2, EventArgs e2) {
+                    button1_Click(sender, e);
+                };
+                frmManual.ShowDialog();
             }
             
         }
