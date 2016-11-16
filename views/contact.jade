@@ -1,19 +1,44 @@
 extends layout
-
+   
 block content
-  h2 #{title}
-  h3 #{message}
-  address
-    | One Microsoft Way
-    br
-    | Redmond, WA 98052-6399
-    br
-    abbr(title='Phone') P: 
-    | 425.555.0100
+  div.remote
+      h2 Device Orientation
+      table
+        tr
+            td Event Supported
+            td#doEvent
+        tr
+              td Tilt Left/Right [gamma]
+              td#doTiltLR
+        tr       
+              td Tilt Front/Back [beta]
+              td#doTiltFB
+        tr       
+              td Direction [alpha]
+              td#doDirection
 
-  address
-    strong Support: 
-    a(href='mailto:Support@example.com') Support@example.com
-    br
-    strong Marketing: 
-    a(href='mailto:Marketing@example.com') Marketing@example.com
+    div.remote
+         h2 Device Motion
+         table
+            tr
+              td Event Supported
+              td#dmEvent
+            tr
+              td acceleration</td>
+              td#moAccel
+            tr
+              td accelerationIncludingGravity
+              td#moAccelGrav
+            tr
+              td rotationRate
+              td#moRotation
+            tr
+              td interval
+              td#moInterval
+
+
+      div.container
+        img#imgLogo.logo.disable( src="/images/html5_logo.png" )
+
+block scripts
+  script(src='/javascripts/remote.js')

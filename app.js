@@ -7,12 +7,33 @@ var express = require('express');
 var routes = require('./routes');
 var http = require('http');
 var path = require('path');
+var ws = require("ws");
+var cp = require('child_process');
+var requestify = require('requestify');
+
+const spawn = cp.spawn;
+const bat = spawn('ipconfig', []);
+
+bat.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+    requestify.post('http://robotiina.zed.ee/ip.php',  'data')
+    .then(function (response) {
+        // Get the response body (JSON parsed or jQuery object for XMLs)
+        response.getBody();
+    });
+});
+
+bat.stderr.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+});
+
 
 var PORT = 33333;
 var HOST = '127.0.0.1';
 
 var dgram = require('dgram');
 var server = dgram.createSocket('udp4');
+var client = dgram.createSocket('udp4');
 
 server.on('listening', function () {
     var address = server.address();
@@ -25,6 +46,18 @@ server.on('message', function (message, remote) {
 });
 
 server.bind(PORT, HOST);
+
+
+var WebSocketServer = require('ws').Server
+    , wss = new WebSocketServer({ port: 8080 });
+
+wss.on('connection', function connection(ws) {
+    ws.on('message', function incoming(message) {
+        console.log('received: %s', message);
+    });
+
+    ws.send('something');
+});
 
 var app = express();
 
@@ -49,7 +82,14 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/about', routes.about);
 app.get('/contact', routes.contact);
-
+app.get('/remote', function (req, res) {
+  //  console.log("aaa");
+    var buf1 = Buffer.from('speeds:0:0:0:0:0');
+    client.send(buf1, 8042, 'localhost', (err) => {
+       // client.close();
+    });
+    res.send("ok");
+});
 http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
