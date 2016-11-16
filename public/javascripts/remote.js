@@ -2,6 +2,12 @@
 (function ($) {
     var count = 0;
     var enabled = false;
+
+	var acceleration = {x:0,y:0,z:0};
+    var last_acc = { x: 0, y: 0, z: 0 };
+    var tilt = { alpha: 0, beta: 0, gamma: 0 };
+    var last_tilt = { alpha: 0, beta: 0, gamma: 0 };
+
     /* initial */
     var doTiltLR = 0;
     var doTiltFB = 0;
@@ -13,64 +19,22 @@
     /* new */
     var tiltLR = 0;
     var tiltFB = 0;
-    var dir = 0;
-	var acceleration = {x:0,y:0,z:0};
-	var last_acc = {x:0,y:0,z:0};
+    var dir = 0;
+    var speeds = [0, 0, 0, 0, 0];
     function init() {
         if (window.DeviceOrientationEvent) {
-            document.getElementById("doEvent").innerHTML = "DeviceOrientation";
+           // document.getElementById("doEvent").innerHTML = "DeviceOrientation";
             // Listen for the deviceorientation event and handle the raw data
-            window.addEventListener('deviceorientation', function (eventData) {
-                // gamma is the left-to-right tilt in degrees, where right is positive
-                tiltLR = eventData.gamma;
-
-                // beta is the front-to-back tilt in degrees, where front is positive
-                tiltFB = eventData.beta;
-
-                // alpha is the compass direction the device is facing in degrees
-                dir = eventData.alpha
-
-                // call our orientation event handler
-                deviceOrientationHandler(tiltLR, tiltFB, dir);
-            }, false);
+            window.addEventListener('deviceorientation', deviceOrientationHandler, false);
         } else {
-            document.getElementById("doEvent").innerHTML = "Not supported on your device or browser.  Sorry."
+            //document.getElementById("doEvent").innerHTML = "Not supported on your device or browser.  Sorry."
         }
         if (window.DeviceMotionEvent) {
-            document.getElementById("dmEvent").innerHTML = "DeviceMotion";
+           // document.getElementById("dmEvent").innerHTML = "DeviceMotion";
 
             window.addEventListener('devicemotion', deviceMotionHandler, false);
-
-            function deviceMotionHandler(eventData) {
-                var info, xyz = "[X, Y, Z]";
-
-                // Grab the acceleration from the results
-                //var acceleration = eventData.acceleration;
-                //info = xyz.replace("X", acceleration.x);
-                //info = info.replace("Y", acceleration.y);
-                //info = info.replace("Z", acceleration.z);
-                //document.getElementById("moAccel").innerHTML = info;
-
-                // Grab the acceleration including gravity from the results
-                acceleration = eventData.accelerationIncludingGravity;
-                info = xyz.replace("X", acceleration.x);
-                info = info.replace("Y", acceleration.y);
-                info = info.replace("Z", acceleration.z);
-                document.getElementById("moAccelGrav").innerHTML = info;
-
-                // Grab the rotation rate from the results
-                var rotation = eventData.rotationRate;
-                info = xyz.replace("X", rotation.alpha);
-                info = info.replace("Y", rotation.beta);
-                info = info.replace("Z", rotation.gamma);
-                document.getElementById("moRotation").innerHTML = info;
-
-                // // Grab the refresh interval from the results
-                info = eventData.interval;
-                document.getElementById("moInterval").innerHTML = info;
-            }
         } else {
-            document.getElementById("dmEvent").innerHTML = "Not supported."
+           // document.getElementById("dmEvent").innerHTML = "Not supported."
         }
     }
     $('.logo').click(function (e) {
@@ -83,17 +47,17 @@
             enabled = false;
         }
     });
-    function deviceOrientationHandler(tiltLR, tiltFB, dir) {
+    function animate(tiltLR, tiltFB, dir) {
         if (enabled) {
-            document.getElementById("doTiltLR").innerHTML = Math.round(tiltLR - doTiltLR);
-            document.getElementById("doTiltFB").innerHTML = Math.round(tiltFB - doTiltFB);
-            document.getElementById("doDirection").innerHTML = Math.round(dir - doDirection);
+            //document.getElementById("doTiltLR").innerHTML = Math.round(tiltLR - doTiltLR);
+            //document.getElementById("doTiltFB").innerHTML = Math.round(tiltFB - doTiltFB);
+            //document.getElementById("doDirection").innerHTML = Math.round(dir - doDirection);
 
             // Apply the transform to the image
             var logo = document.getElementById("imgLogo");
-            logo.style.webkitTransform = "rotate(" + (tiltLR - doTiltLR) + "deg) rotate3d(1,0,0, " + ((tiltFB - doTiltFB) * -1) + "deg)";
+            logo.style.webkitTransform = "rotate(" + (tiltLR - doTiltLR) + "deg) rotate3d(1,0,0, " + ((tiltFB - doTiltFB) ) + "deg)";
             logo.style.MozTransform = "rotate(" + (tiltLR - doTiltLR) + "deg)";
-            logo.style.transform = "rotate(" + (tiltLR - doTiltLR) + "deg) rotate3d(1,0,0, " + ((tiltFB - doTiltFB) * -1) + "deg)";
+            logo.style.transform = "rotate(" + (tiltLR - doTiltLR) + "deg) rotate3d(1,0,0, " + ((tiltFB - doTiltFB) ) + "deg)";
         } else {
             doTiltLR = tiltLR;
             doTiltFB = tiltFB;
@@ -102,9 +66,24 @@
         }
     }
 
+    function deviceOrientationHandler(eventData) {
+        // Grab the acceleration including gravity from the results
+        tilt = eventData;
+        animate(eventData.alpha, eventData.beta, eventData.gamma);
+    }
+    function deviceMotionHandler(eventData) {
+        var info, xyz = "[X, Y, Z]";
+
+        // Grab the acceleration including gravity from the results
+        acceleration = eventData.accelerationIncludingGravity;
+        var rot_x = acceleration.x * 18;
+        var rot_y = acceleration.y * 18;
+        animate(rot_x, rot_y, 0);
+
+    }
     setInterval(function () {
         if (enabled) {
-            $.get('/remote?q=x=' + (acceleration.x-last_acc.x) + '&y' + (acceleration.y-last_acc.y) + '&z' + (acceleration.z-last_acc.z));
+            $.get('/mainboard?cmd=speeds:' + speeds);
             last_acc = acceleration;
         }
     }, 300);
