@@ -20,7 +20,14 @@
     var tiltLR = 0;
     var tiltFB = 0;
     var dir = 0;
-    var speeds = [0, 0, 0, 0, 0];
+    var speed = { x: 0, y: 0 };
+    var wheelAngles = [
+        { x: -Math.sin(45.0 / 180 * Math.PI), y: Math.cos(45.0 / 180 * Math.PI) },
+        { x: -Math.sin(135.0 / 180 * Math.PI), y: Math.cos(135.0 / 180 * Math.PI) },
+        { x: -Math.sin(225.0 / 180 * Math.PI), y: Math.cos(225.0 / 180 * Math.PI) },
+        { x: -Math.sin(315.0 / 180 * Math.PI), y: Math.cos(315.0 / 180 * Math.PI) }
+    ];
+
     function init() {
         if (window.DeviceOrientationEvent) {
            // document.getElementById("doEvent").innerHTML = "DeviceOrientation";
@@ -79,10 +86,17 @@
         var rot_x = acceleration.x * 18;
         var rot_y = acceleration.y * 18;
         animate(rot_x, rot_y, 0);
-
+        speed.x += (acceleration.x - last_acc.x) * eventData.interval;
+        speed.y += (acceleration.y - last_acc.y) * eventData.interval;
+        last_acc = acceleration;
     }
     setInterval(function () {
         if (enabled) {
+            var w1 = wheelAngles[0].x * speed.x + wheelAngles[0].y * speed.y;
+            var w2 = wheelAngles[1].x * speed.x + wheelAngles[1].y * speed.y;
+            var w3 = wheelAngles[2].x * speed.x + wheelAngles[2].y * speed.y;
+            var w4 = wheelAngles[3].x * speed.x + wheelAngles[3].y * speed.y;
+            var speeds = w1 + ":" + w2 + ":" + w3 + ":" + w4 + ":" +"0"
             $.get('/mainboard?cmd=speeds:' + speeds);
             last_acc = acceleration;
         }

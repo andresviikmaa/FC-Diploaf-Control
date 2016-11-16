@@ -88,8 +88,8 @@ app.get('/about', routes.about);
 app.get('/remote', routes.remote);
 app.get('/mainboard', function (req, res) {
 
-  //  console.log("aaa");
-    var buf1 = Buffer.from(req.cmd);
+    console.log(req.query.cmd);
+    var buf1 = Buffer.from(req.query.cmd);
     client.send(buf1, 8042, 'localhost', (err) => {
        // client.close();
     });
