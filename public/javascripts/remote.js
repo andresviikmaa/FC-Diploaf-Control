@@ -14,7 +14,8 @@
     var tiltLR = 0;
     var tiltFB = 0;
     var dir = 0;
-
+	var acceleration = {x:0,y:0,z:0};
+	var last_acc = {x:0,y:0,z:0};
     function init() {
         if (window.DeviceOrientationEvent) {
             document.getElementById("doEvent").innerHTML = "DeviceOrientation";
@@ -44,11 +45,11 @@
                 var info, xyz = "[X, Y, Z]";
 
                 // Grab the acceleration from the results
-                var acceleration = eventData.acceleration;
-                info = xyz.replace("X", acceleration.x);
-                info = info.replace("Y", acceleration.y);
-                info = info.replace("Z", acceleration.z);
-                document.getElementById("moAccel").innerHTML = info;
+                //var acceleration = eventData.acceleration;
+                //info = xyz.replace("X", acceleration.x);
+                //info = info.replace("Y", acceleration.y);
+                //info = info.replace("Z", acceleration.z);
+                //document.getElementById("moAccel").innerHTML = info;
 
                 // Grab the acceleration including gravity from the results
                 acceleration = eventData.accelerationIncludingGravity;
@@ -103,10 +104,8 @@
 
     setInterval(function () {
         if (enabled) {
-            $.get('/remote?q=drive;' + (tiltFB * 3) + ';' + (dir));
-            lastTiltLR = tiltLR;
-            lastTiltFB = tiltFB;
-            lastDirection = dir;
+            $.get('/remote?q=x=' + (acceleration.x-last_acc.x) + '&y' + (acceleration.y-last_acc.y) + '&z' + (acceleration.z-last_acc.z));
+            last_acc = acceleration;
         }
     }, 300);
 

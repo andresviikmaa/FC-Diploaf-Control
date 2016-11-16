@@ -11,6 +11,8 @@ var ws = require("ws");
 var cp = require('child_process');
 var requestify = require('requestify');
 
+console.log("Wifi part");
+
 const spawn = cp.spawn;
 const bat = spawn('ipconfig', []);
 
@@ -27,7 +29,7 @@ bat.stderr.on('data', (data) => {
     console.log(`stdout: ${data}`);
 });
 
-
+console.log("UDP part");
 var PORT = 33333;
 var HOST = '127.0.0.1';
 
@@ -46,6 +48,7 @@ server.on('message', function (message, remote) {
 });
 
 server.bind(PORT, HOST);
+console.log("Websoket part");
 
 
 var WebSocketServer = require('ws').Server
@@ -58,6 +61,7 @@ wss.on('connection', function connection(ws) {
 
     ws.send('something');
 });
+console.log("UI part");
 
 var app = express();
 
