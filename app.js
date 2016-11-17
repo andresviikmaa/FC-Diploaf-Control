@@ -7,10 +7,10 @@ var express = require('express');
 var routes = require('./routes');
 var http = require('http');
 var path = require('path');
-var ws = require("ws");
 var cp = require('child_process');
 var requestify = require('requestify');
 var os = require("os");
+var cpaker = require("jspack").jspack;
 
 console.log(os.hostname());
 
@@ -19,6 +19,7 @@ data = [];
 data['hostname'] = os.hostname();
 data['network'] = os.networkInterfaces();
 
+var hostname = data['hostname'];
 requestify.post('http://robotiina.zed.ee/ip.php',  data)
     .then(function (response) {
         // Get the response body (JSON parsed or jQuery object for XMLs)
@@ -26,14 +27,18 @@ requestify.post('http://robotiina.zed.ee/ip.php',  data)
 });
 
 var platform = os.platform()
+var fieldState = {
+    balls: Array(15)
+}
 
 console.log("UDP part");
-var PORT = 33333;
+var PORT = hostname == "Loafdoodle" ? 30001 : 30000;
 var HOST = '127.0.0.1';
 
 var dgram = require('dgram');
 var server = dgram.createSocket('udp4');
 var client = dgram.createSocket('udp4');
+var io = null;
 
 server.on('listening', function () {
     var address = server.address();
@@ -41,24 +46,27 @@ server.on('listening', function () {
 });
 
 server.on('message', function (message, remote) {
-    console.log(remote.address + ':' + remote.port + ' - ' + message);
+    if (message[0] == 0 /*message.length == 1912*/) {
+        fieldState.data =      cpaker.Unpack("<II BBBB BBBB BBBB dd", message, 0);
+        fieldState.partner =   cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36);
+        fieldState.gates =    [cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, 36 + 80), cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, 36 + 80 + 96)];
+        fieldState.oponents = [cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36 + 80 + 96 + 96), cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36 + 80 + 96 + 96 + 80)];
+        var s = 36 + 80 + 96 + 96 + 80 + 80; // 468
+        for (var i = 0; i < 15; i++) { // 1440
+            fieldState.balls[i] = cpaker.Unpack("<Bxxx ddd dd dd IBxxxd", message, s + i *96);
+        }
+        //console.log(data);
+        if (io != null) {
+            io.sockets.emit('state', fieldState);
+        }
+    }
 
 });
 
 server.bind(PORT, HOST);
-console.log("Websoket part");
+//server.close();
 
 
-var WebSocketServer = require('ws').Server
-    , wss = new WebSocketServer({ port: 8080 });
-
-wss.on('connection', function connection(ws) {
-    ws.on('message', function incoming(message) {
-        console.log('received: %s', message);
-    });
-
-    ws.send('something');
-});
 console.log("UI part");
 
 var app = express();
@@ -82,7 +90,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', function (req, res) {
-    res.render('index', { title: 'FC Diploaf', url: os.hostname()});
+    res.render('index', { title: 'FC Diploaf Control Center', hostname: os.hostname()});
 });
 app.get('/about', routes.about);
 app.get('/remote', routes.remote);
@@ -95,8 +103,9 @@ app.get('/mainboard', function (req, res) {
     });
     res.send("ok");
 });
-var server = http.createServer(app)
-var io = require('socket.io').listen(server);
+var web = http.createServer(app)
+
+io = require('socket.io').listen(web);
 
 io.sockets.on('connection', function (socket) {
     socket.on('setPseudo', function (data) {
@@ -110,7 +119,7 @@ io.sockets.on('connection', function (socket) {
         })
     });
 });
-server.listen(app.get('port'), function () {
+web.listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
 

@@ -62,3 +62,14 @@ img.disabled {
 #qrcode {
   float: right;
 }
+.online {
+  color: #008000;
+}
+.online:after {
+  content: "online";
+  float: right;
+  margin-top: -25px;
+}
+.aa {
+  color: #f00;
+}

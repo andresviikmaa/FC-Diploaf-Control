@@ -3,7 +3,7 @@ html
   head
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    title #{title} - My Express Application
+    title #{title}
     link(rel='stylesheet', type='text/css', href='/stylesheets/bootstrap.min.css')
     link(rel='stylesheet', type='text/css', href='/stylesheets/style.css')
     script(src='/javascripts/modernizr-2.6.2.js')
@@ -17,22 +17,20 @@ html
             span.icon-bar
             span.icon-bar
             span.icon-bar
-          a.navbar-brand(href='/') Application name
+          a.navbar-brand(href='/') #{title}
         .navbar-collapse.collapse
           ul.nav.navbar-nav
             li
               a(href='/') Home
             li
-              a(href='/about') DipWookie
-            li
-              a(href='/about') LoafDoodle
+              a(href='/config') Config
             li
               a(href='/remote') Manual Control
     .container.body-content
       block content
       hr
       footer
-        p &copy; #{year} - My Express Application
+        p &copy; 2016 - FC Diploaf
 
     script(src='/javascripts/jquery-1.10.2.js')
     script(src='/javascripts/bootstrap.js')
