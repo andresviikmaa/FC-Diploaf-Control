@@ -1,0 +1,55 @@
+﻿extends layout
+
+
+block content
+    .jumbotron
+        span Config
+    .row
+        .col-xs-12
+            form
+                fieldset.form-group.row
+                    legend.col-form-legend.col-sm-2 Target Gate
+                    .col-sm-10
+                        .form-check
+                            label.form-check-inline(for="gateBlue")
+                                input(type="radio" name="gate" id="gateBlue")
+                                span &nbsp; Blue&nbsp;&nbsp;&nbsp;
+                            label.form-check-inline(for="gateYellow")
+                                input(type="radio" name="gate" id="gateYellow")
+                                span &nbsp; Yellow
+                fieldset.form-group.row
+                    legend.col-form-legend.col-sm-2 Robot Color
+                    .col-sm-10
+                        .form-check
+                            label.form-check-inline(for="robotPurple")
+                                input(type="radio" name="robot" id="robotPurple")
+                                span &nbsp; Purple&nbsp;&nbsp;&nbsp;
+                            label.form-check-inline(for="robotPink")
+                                input(type="radio" name="robot" id="robotPink")
+                                span &nbsp; Pink
+
+               fieldset.form-group.row
+                    legend.col-form-legend.col-sm-2 Choose Field and Team
+                    .col-sm-10
+                        .form-check
+                            label.form-check-inline(for="fieldA")
+                                input(type="radio" name="field" id="fieldA")
+                                span &nbsp; Field A&nbsp;&nbsp;&nbsp;
+                            label.form-check-inline(for="fieldB")
+                                input(type="radio" name="field" id="fieldB")
+                                span &nbsp; Field B
+                        .form-check
+                            label.form-check-inline(for="teamA")
+                                input(type="radio" name="team" id="teamA")
+                                span &nbsp; Team A&nbsp;&nbsp;&nbsp;
+                            label.form-check-inline(for="teamB")
+                                input(type="radio" name="team" id="teamB")
+                                span &nbsp; Team B
+                        .form-check
+                            label.form-check-inline(for="markerA")
+                                input(type="radio" name="marker" id="markerA")
+                                span &nbsp; Robot A&nbsp;&nbsp;&nbsp;
+                            label.form-check-inline(for="markerB")
+                                input(type="radio" name="marker" id="markerB")
+                                span &nbsp; Robot B
+                 button.btn.btn-primary(type="submit") Save

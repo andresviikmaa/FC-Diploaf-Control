@@ -92,8 +92,12 @@ if ('development' == app.get('env')) {
 app.get('/', function (req, res) {
     res.render('index', { title: 'FC Diploaf Control Center', hostname: os.hostname()});
 });
-app.get('/about', routes.about);
 app.get('/remote', routes.remote);
+app.get('/config', function (req, res) {
+    res.render('config', { title: os.hostname() });
+});
+app.get('/live', routes.about);
+app.get('/referee', routes.referee);
 app.get('/mainboard', function (req, res) {
 
     console.log(req.query.cmd);

@@ -2,11 +2,13 @@
 
 
 block content
-  h3.status  #{hostname}
-    div
+    h3.status  #{hostname}
+        div
 
-.row
-    .col
-        form
-            div.form-group
-
+    form
+        .row
+            .col.text-center
+                .btn-group
+                    button.disable_offline.disabled.btn.btn-primary.runmode(type="button" role="group" data-mode="1vs1") 1 vs 1
+                    button.disable_offline.disabled.btn.btn-secondary.runmode(type="button" role="group" data-mode="idle").active Idle
+                    button.disable_offline.disabled.btn.btn-primary.runmode(type="button" role="group" data-mode="2vs2") 2 vs 2
