@@ -53,6 +53,7 @@
             el.addClass('disabled');
             enabled = false;
         }
+		speed = { x: 0, y: 0 };
     });
     function animate(tiltLR, tiltFB, dir) {
         if (enabled) {

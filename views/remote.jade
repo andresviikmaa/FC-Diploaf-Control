@@ -3,6 +3,12 @@ extends layout
 block content
     div.container
     img#imgLogo.logo.disabled( src="/images/html5_logo.png" )
+    .colorwheel
 
 block scripts
-  script(src='/javascripts/remote.js')
+  script(src='/javascripts/remote.js') 
+  script(src='/javascripts/raphael.min.js')
+  script(src='/javascripts/colorwheel.js')
+  script.
+    colorwheel = Raphael.colorwheel($(".colorwheel")[0],150);
+    colorwheel.onchange(update).color("#864343");
