@@ -19,7 +19,8 @@
     /* new */
     var tiltLR = 0;
     var tiltFB = 0;
-    var dir = 0;
+    var dir = 0;
+
     var speed = { x: 0, y: 0 };
     var wheelAngles = [
         { x: -Math.sin(45.0 / 180 * Math.PI), y: Math.cos(45.0 / 180 * Math.PI) },
@@ -87,8 +88,8 @@
         var rot_x = acceleration.x * 18;
         var rot_y = acceleration.y * 18;
         animate(rot_x, rot_y, 0);
-        speed.x += (acceleration.x - last_acc.x) * eventData.interval;
-        speed.y += (acceleration.y - last_acc.y) * eventData.interval;
+        speed.x += (acceleration.x - last_acc.x) * eventData.interval * 100;
+        speed.y += (acceleration.y - last_acc.y) * eventData.interval * 100;
         last_acc = acceleration;
     }
     setInterval(function () {
