@@ -30,9 +30,12 @@ var platform = os.platform()
 var fieldState = {
     balls: Array(15)
 }
-
+var robotState = {
+    
+}
 console.log("UDP part");
-var PORT = hostname == "Loafdoodle" ? 30001 : 30000;
+var SERVER_PORT = hostname == "Loafdoodle" ? 30001 : 30000;
+var CLIENT_PORT = hostname == "Loafdoodle" ? 30000 : 30001;
 var HOST = '127.0.0.1';
 
 var dgram = require('dgram');
@@ -46,27 +49,37 @@ server.on('listening', function () {
 });
 
 server.on('message', function (message, remote) {
-    if (message[0] == 0 /*message.length == 1912*/) {
-        fieldState.data =      cpaker.Unpack("<II BBBB BBBB BBBB dd", message, 0);
-        fieldState.partner =   cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36);
-        fieldState.gates =    [cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, 36 + 80), cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, 36 + 80 + 96)];
+    if (message[0] == 0) {
+        fieldState.data = cpaker.Unpack("<II BBBB BBBx dd", message, 0);
+        fieldState.partner = cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36);
+        fieldState.gates = [cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, 36 + 80), cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, 36 + 80 + 96)];
         fieldState.oponents = [cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36 + 80 + 96 + 96), cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36 + 80 + 96 + 96 + 80)];
-        var s = 36 + 80 + 96 + 96 + 80 + 80; // 468
+        fieldState.self = cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36 + 80 + 96 + 96 + 80 + 80)
+        var s = 36 + 80 + 96 + 96 + 80 + 80 + 80; // 548
         for (var i = 0; i < 15; i++) { // 1440
-            fieldState.balls[i] = cpaker.Unpack("<Bxxx ddd dd dd IBxxxd", message, s + i *96);
+            fieldState.balls[i] = cpaker.Unpack("<Bxxx ddd dd dd IBxxxd", message, s + i * 96);
         }
         //console.log(data);
         if (io != null) {
-            io.sockets.emit('state', fieldState);
+            io.sockets.emit('fieldstate', fieldState);
+        }
+    } else if (message[0] == 1) {
+        if (io != null) {
+            io.sockets.emit('robotstate', cpaker.Unpack("<II BBBB BBB BB", message, 0));
         }
     }
 
 });
 
-server.bind(PORT, HOST);
+server.bind(SERVER_PORT, HOST);
 //server.close();
 
-
+var command = {
+    FIELD_STATE: 0,
+    ROBOT_STATE: 1,
+    PLAY_MODE: 10,
+    MANUAL_CONTROL: 20
+}
 console.log("UI part");
 
 var app = express();
@@ -112,6 +125,17 @@ var web = http.createServer(app)
 io = require('socket.io').listen(web);
 
 io.sockets.on('connection', function (socket) {
+    socket.on('run_mode', function (message) {
+        console.log(message);
+        
+        var data = new Buffer("--");
+        data[0] = command.PLAY_MODE;
+        data[1] = parseInt(message);
+        client.send(data, 0, data.length, CLIENT_PORT, "localhost", function (err, bytes) {
+            if (err) throw err;
+            console.log('UDP message sent to:' + CLIENT_PORT);
+        });
+    });
     socket.on('setPseudo', function (data) {
         socket.set('pseudo', data);
     });
