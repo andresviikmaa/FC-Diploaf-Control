@@ -1,9 +1,66 @@
 ﻿extends layout
 block content
     .container
+      h1 send command
+      form
         .row
-            .col
-                h1 send command
+            .col.col-xs-12
+                   fieldset.form-group.row
+                        legend.col-form-legend.col-sm-2 Choose Field and Team
+                        .col-sm-10
+                            .form-check
+                                label.form-check-inline(for="fieldA")
+                                    input(type="radio" name="field" id="fieldA" value="A" checked)
+                                    span &nbsp; Field A&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="fieldB")
+                                    input(type="radio" name="field" id="fieldB" value="B")
+                                    span &nbsp; Field B
+                            .form-check
+                                label.form-check-inline(for="teamA")
+                                    input(type="radio" name="team" id="teamA" value="A")
+                                    span &nbsp; Team A&nbsp;&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="teamB")
+                                    input(type="radio" name="team" id="teamB" value="B")
+                                    span &nbsp; Team B&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="teamX")
+                                    input(type="radio" name="team" id="teamX" value="X" checked)
+                                    span &nbsp; Team X
+                            .form-check
+                                label.form-check-inline(for="robotA")
+                                    input(type="radio" name="robot" id="robotA" value="A")
+                                    span &nbsp; Robot A&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="robotB")
+                                    input(type="radio" name="robot" id="robotB" value="B")
+                                    span &nbsp; Robot B&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="robotX")
+                                    input(type="radio" name="robot" id="robotX" value="X" checked)
+                                    span &nbsp; Robot X
+      
+         .row
+            .col.col-xs-12
                 form
-                    input
-                    button Send
+                    select(name="command")
+                        option START----
+                        option STOP-----
+                        option PLACEDBAL
+                        option ENDHALF--
+                        option KICKOFF-
+                        option IFREEK--
+                        option DFREEK--
+                        option GOALK---
+                        option THROWIN-
+                        option CORNERK-
+                        option PENALTY-
+                        option GOAL----
+                        option CARDY---
+                    button.ref_send Send
+block scripts
+    script.
+        $("form").submit(function(){
+            var field = $('input[name=field]:checked').val();
+            var team = $('input[name=team]:checked').val();
+            var robot = $('input[name=robot]:checked').val();
+            var cmd = $('select').val();
+            socket.emit('referee', "<ref:a"+ field + team + cmd + ">");
+            return false;
+        });

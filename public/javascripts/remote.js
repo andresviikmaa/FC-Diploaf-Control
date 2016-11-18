@@ -98,8 +98,9 @@
             var w2 = wheelAngles[1].x * speed.x + wheelAngles[1].y * speed.y;
             var w3 = wheelAngles[2].x * speed.x + wheelAngles[2].y * speed.y;
             var w4 = wheelAngles[3].x * speed.x + wheelAngles[3].y * speed.y;
-            var speeds = w1 + ":" + w2 + ":" + w3 + ":" + w4 + ":" +"0"
-            $.get('/mainboard?cmd=speeds:' + speeds);
+            var speeds = "speeds:" + w1 + ":" + w2 + ":" + w3 + ":" + w4 + ":" +"0"
+           // $.get('/mainboard?cmd=speeds:' + speeds);
+            socket.emit("mainboard", speeds);
             last_acc = acceleration;
         }
     }, 300);
