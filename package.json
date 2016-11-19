@@ -7,11 +7,9 @@
     "name": "andres"
   },
   "dependencies": {
-    "colorwheel": "0.0.3",
     "express": "3.4.4",
     "jade": "*",
     "jspack": "0.0.4",
-    "raphael": "^2.2.7",
     "requestify": "^0.2.5",
     "socket.io": "^1.5.1",
     "stylus": "*"

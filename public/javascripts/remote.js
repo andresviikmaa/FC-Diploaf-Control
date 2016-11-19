@@ -45,13 +45,13 @@
            // document.getElementById("dmEvent").innerHTML = "Not supported."
         }
     }
-    $('.logo').click(function (e) {
-        var el = $(this);
-        if (el.hasClass('disabled')) {
-            el.removeClass('disabled');
+    $('.enable').click(function (e) {
+        var el = $(this).parent;
+        if (!enabled) {
+            //el.removeClass('disabled');
             enabled = true;
         } else {
-            el.addClass('disabled');
+            //el.addClass('disabled');
             enabled = false;
         }
 		speed = { x: 0, y: 0 };
@@ -102,6 +102,11 @@
            // $.get('/mainboard?cmd=speeds:' + speeds);
             socket.emit("mainboard", speeds);
             last_acc = acceleration;
+            $("#w1").slider('setValue', w1);
+            $("#w2").slider('setValue', w2);
+            $("#w3").slider('setValue', w3);
+            $("#w4").slider('setValue', w4);
+            $("#w5").slider('setValue', w5);
         }
     }, 300);
 

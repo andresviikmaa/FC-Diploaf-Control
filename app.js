@@ -109,7 +109,7 @@ app.get('/remote', routes.remote);
 app.get('/config', function (req, res) {
     res.render('config', { title: os.hostname() });
 });
-app.get('/live', routes.about);
+app.get('/live', routes.live);
 app.get('/referee', routes.referee);
 app.get('/mainboard', function (req, res) {
 
