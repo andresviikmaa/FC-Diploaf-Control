@@ -85,20 +85,20 @@
 
         // Grab the acceleration including gravity from the results
         acceleration = eventData.accelerationIncludingGravity;
-        var rot_x = acceleration.x * 18;
-        var rot_y = acceleration.y * 18;
+        var rot_y = acceleration.x * -18;
+        var rot_x = acceleration.y * 18;
         animate(rot_x, rot_y, 0);
-        speed.x += (acceleration.x - last_acc.x) * eventData.interval * 100;
-        speed.y += (acceleration.y - last_acc.y) * eventData.interval * 100;
+        speed.x += (acceleration.x - last_acc.x) * eventData.interval * 10;
+        speed.y += (acceleration.y - last_acc.y) * eventData.interval * 10;
         last_acc = acceleration;
     }
     setInterval(function () {
         if (enabled) {
-            var w1 = wheelAngles[0].x * speed.x + wheelAngles[0].y * speed.y;
-            var w2 = wheelAngles[1].x * speed.x + wheelAngles[1].y * speed.y;
-            var w3 = wheelAngles[2].x * speed.x + wheelAngles[2].y * speed.y;
-            var w4 = wheelAngles[3].x * speed.x + wheelAngles[3].y * speed.y;
-            var speeds = "speeds:" + w1 + ":" + w2 + ":" + w3 + ":" + w4 + ":" +"0"
+            var w1 = -parseInt(wheelAngles[0].x * speed.x + wheelAngles[0].y * speed.y);
+            var w2 = -parseInt(wheelAngles[1].x * speed.x + wheelAngles[1].y * speed.y);
+            var w3 = parseInt(wheelAngles[3].x * speed.x + wheelAngles[3].y * speed.y);
+            var w4 = parseInt(wheelAngles[2].x * speed.x + wheelAngles[2].y * speed.y);
+            var speeds = "speeds:" + w1 + ":" + w2 + ":" + w3 + ":" + w4 + ":" +"0";
            // $.get('/mainboard?cmd=speeds:' + speeds);
             socket.emit("mainboard", speeds);
             last_acc = acceleration;

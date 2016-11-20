@@ -126,7 +126,7 @@ io = require('socket.io').listen(web);
 
 io.sockets.on('connection', function (socket) {
     socket.on('run_mode', function (message) {
-        console.log(message);
+        //console.log(message);
         
         var data = new Buffer("--");
         data[0] = command.PLAY_MODE;
@@ -137,6 +137,7 @@ io.sockets.on('connection', function (socket) {
         });
     });
     socket.on('mainboard', function (message) {
+		console.log(message);
         var buf1 = Buffer.from(message);
         client.send(buf1, 8042, '192.168.4.1', (err) => {
         });
