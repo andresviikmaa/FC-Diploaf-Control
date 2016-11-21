@@ -32,8 +32,22 @@ var RobotState = {
     ROBOT_MARKER:8,
 
     runMode:9,
-    gameMode:10
+    gameMode: 10,
+    pendingGameMode: 11,
+    playState:12
 }
+var FieldState = {
+    collisionWithBorder: 2,
+    collisionWithUnknown: 3,
+    obstacleNearBall: 4,
+    gateObstructed: 5,
+    
+    ballCount: 6,
+    closestBall: 7,
+    closestBallInFront: 8,
+	collisionRange: 9
+
+};
 var lastRunMode = RunMode.MODE_IDLE;
 setInterval(function () {
     
@@ -55,10 +69,44 @@ function parseStateData() {
 
     }
 }
+function printObjectPosition(obj, pos) {
+    $(obj + " .valid").html(pos[0] ? "yes":"no")
+    $(obj + " .distance").html(pos[1].toFixed(2))
+    $(obj + " .angle").html(pos[2].toFixed(2))
+    $(obj + " .heading").html(pos[3].toFixed(2))
+    $(obj + " .fx").html(pos[4].toFixed(2))
+    $(obj + " .fy").html(pos[5].toFixed(2))
+    $(obj + " .rx").html(pos[6].toFixed(2))
+    $(obj + " .ry").html(pos[7].toFixed(2))
 
+}
 socket.on('fieldstate', function (data) {
-   // console.log(data);
+    // console.log(data);
+    window.fieldState = data;
     pingPong = true;
+    $("#collisionWithBorder").html(data.data[FieldState.collisionWithBorder] ? "yes":"no");
+    $("#collisionWithUnknown").html(data.data[FieldState.collisionWithUnknown] ? "yes":"no");
+    $("#obstacleNearBall").html(data.data[FieldState.obstacleNearBall] ? "yes":"no");
+    $("#gateObstructed").html(data.data[FieldState.gateObstructed] ? "yes":"no");
+
+    $("#ballCount").html(data.data[FieldState.ballCount]);
+    $("#closestBall").html(data.data[FieldState.closestBall]);
+    $("#closestBallInFront").html(data.data[FieldState.closestBallInFront]);
+    $("#collisionRange").html(data.data[FieldState.collisionRange] + ":" + data.data[FieldState.collisionRange + 1]);
+    printObjectPosition("#blueGate", data.gates[0]);
+    printObjectPosition("#yellowGate", data.gates[1]);
+    printObjectPosition("#self", data.self);
+    printObjectPosition("#partner", data.partner);
+    printObjectPosition("#opponent1", data.oponents[0]);
+    printObjectPosition("#opponent2", data.oponents[1]);
+    for (var i = 0; i < 12; i++) {
+        printObjectPosition("#ball"+i, data.balls[i]);
+    }
+    //
+    //ballCount: 6,
+    //closestBall: 7,
+    //closestBallInFront: 8,
+	//collisionRange: 9
 });
 
 socket.on('robotstate', function (data) {
@@ -82,8 +130,13 @@ socket.on('robotstate', function (data) {
                 $(".run_mode button[data-mode=1]").removeClass("btn-secondary").removeClass("btn-primary");
                 $(".run_mode button[data-mode=2]").addClass("btn-primary").removeClass("btn-secondary");
                 break;
-
         }
     }
+    
+    $('input[name=gate]:nth(' + (data[RobotState.targetGate]) + ')').prop('checked', true);
+    $('input[name=robot]:nth(' + (data[RobotState.ourTeam]-6) + ')').prop('checked', true);
+    $('input[name=field]:nth(' + (data[RobotState.FIELD_MARKER] - 65) + ')').prop('checked', true);
+    $('input[name=team]:nth(' + (data[RobotState.TEAM_MARKER] - 65) + ')').prop('checked', true);
+    $('input[name=marker]:nth(' + (data[RobotState.ROBOT_MARKER]-65) + ')').prop('checked', true);
 });
 

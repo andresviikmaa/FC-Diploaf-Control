@@ -24,14 +24,14 @@ var liveFeed = {
     }
  
     // Size the canvas appropriately
-    var width = window.innerWidth;
-    var height = window.innerHeight;
-    liveFeed.canvas.width = width;
-    liveFeed.canvas.height = height;
+    //var width = window.innerWidth;
+    //var height = window.innerHeight;
+    //liveFeed.canvas.width = width;
+    //liveFeed.canvas.height = height;
     
     // Size of squares is canvas width broken into equal chunks
-    liveFeed.xDis = width/liveFeed.divisions;
-    liveFeed.yDis = height/liveFeed.divisions;
+    //liveFeed.xDis = width/liveFeed.divisions;
+    //liveFeed.yDis = height/liveFeed.divisions;
                 
     // All pink, baby
     this.ctx.fillStyle = "#EA80B0";
@@ -43,26 +43,27 @@ var liveFeed = {
     // global
     drawLoop = function() {
       liveFeed.repeater = requestAnimationFrame(drawLoop);
-      liveFeed.oneMovement();
+      liveFeed.update();
     }
     drawLoop();
         
   },
   
   drawSquare: function(x, y) {
-    // Actually draw it
-    liveFeed.ctx.fillRect(x*this.xDis, y*this.yDis, this.xDis, this.yDis);
+        // Actually draw it
+        var xx = x/5 + liveFeed.canvas.width / 2;
+        var yy = y/5 + liveFeed.canvas.height / 2;
+    liveFeed.ctx.fillRect(xx,yy,5, 5);
     
     // Record it in memory
-    liveFeed.memory[x][y] = true;
+    //liveFeed.memory[x][y] = true;
   },
-  oneMovement: function() {
+    update: function () {
+        if (window.fieldState == undefined) return;
+        for(var i=0; i<12;i++)
+            liveFeed.drawSquare(window.fieldState.balls[i][6], window.fieldState.balls[i][7]);
   },
-  checkPossiblePositions: function() {
-  
- 
-    
-  },
+
   
   startNewRound: function() {
     // Stop! 

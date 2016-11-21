@@ -1,7 +1,126 @@
 ﻿extends layout
 block content
-	.container
-		canvas#liveFeed
-		
+    .container
+        .row
+            .col-xs-5 
+                b Border Collision
+            .col-xs-1#collisionWithBorder x
+            .col-xs-5 
+                b collisionRange
+            .col-xs-1#collisionRange x
+            .col-xs-5 
+                b Unknown collision
+            .col-xs-1#collisionWithUnknown x
+            .col-xs-5 
+                b ballCount
+            .col-xs-1#ballCount x
+            .col-xs-5 
+                b obstacle Near Ball
+            .col-xs-1#obstacleNearBall  x
+            .col-xs-5 
+                b closestBall
+            .col-xs-1#closestBall x
+            .col-xs-5 
+                b gateObstructed
+            .col-xs-1#gateObstructed x
+            .col-xs-5 
+                b closestBallInFront
+            .col-xs-1#closestBallInFront x
+        .row
+            .col-md-8
+                canvas#liveFeed.col-md-12(style="border:1px solid red")
+                .col-md-12.btn-group.text-center
+                    button.btn.btn-primary#polar Polar
+                    button.btn.btn-secondary#raw Raw pixels
+                    button.btn.btn-secondary#field Field
+            .col-md-4
+                table(border=1)
+                    thead
+                        tr
+                            th Object 
+                            th valid
+                            th dist
+                            th angle
+                            th heading
+                            th field x
+                            th y
+                            th raw x
+                            th y
+                    tbody
+                        tr#blueGate
+                            th Blue G
+                            td.valid - 
+                            td.distance -
+                            td.angle -
+                            td.heading -
+                            td.fx -
+                            td.fy -
+                            td.rx -
+                            td.ry -
+                        tr#yellowGate
+                            th Yell G
+                            td.valid - 
+                            td.distance -
+                            td.angle -
+                            td.heading -
+                            td.fx -
+                            td.fy -
+                            td.rx -
+                            td.ry -
+                        tr#self
+                            th self
+                            td.valid - 
+                            td.distance -
+                            td.angle -
+                            td.heading -
+                            td.fx -
+                            td.fy -
+                            td.rx -
+                            td.ry -
+                        tr#partner
+                            th partner
+                            td.valid - 
+                            td.distance -
+                            td.angle -
+                            td.heading -
+                            td.fx -
+                            td.fy -
+                            td.rx -
+                            td.ry -
+                        tr#opponent1
+                            th Opp 1
+                            td.valid - 
+                            td.distance -
+                            td.angle -
+                            td.heading -
+                            td.fx -
+                            td.fy -
+                            td.rx -
+                            td.ry -
+
+                        tr#opponent2
+                            th Opp 1
+                            td.valid - 
+                            td.distance -
+                            td.angle -
+                            td.heading -
+                            td.fx -
+                            td.fy -
+                            td.rx -
+                            td.ry -
+
+                        - for (var i = 0; i < 12; ++i) {
+                            tr(id= "ball"+i)
+                                th= "ball "+i
+                                td.valid - 
+                                td.distance -
+                                td.angle -
+                                td.heading -
+                                td.fx -
+                                td.fy -
+                                td.rx -
+                                td.ry -
+                        - }
+
 block scripts
-	script(src="/javascripts/live.js")
+    script(src="/javascripts/live.js")

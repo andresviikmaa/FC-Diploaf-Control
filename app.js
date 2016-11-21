@@ -78,7 +78,9 @@ var command = {
     FIELD_STATE: 0,
     ROBOT_STATE: 1,
     PLAY_MODE: 10,
-    MANUAL_CONTROL: 20
+    COMMAND_SET_CONF: 11,
+    COMMAND_MANUAL_CONTROL: 20,
+    COMMAND_STATEMACHINE_STATE: 30,
 }
 console.log("UI part");
 
@@ -161,6 +163,19 @@ io.sockets.on('connection', function (socket) {
         });
         // simulator
         client.send(buf1, 50022, 'localhost', (err) => {
+        });
+    });
+
+    socket.on('conf_change', function (message) {
+        //console.log(message);
+
+        var data = new Buffer("---"+message[0]);
+        data[0] = command.COMMAND_SET_CONF;
+        data[1] = parseInt(message[1]);
+        data[2] = message[1].charCodeAt(0);
+        client.send(data, 0, data.length, CLIENT_PORT, "localhost", function (err, bytes) {
+            if (err) throw err;
+            console.log('UDP message sent to:' + CLIENT_PORT);
         });
     });
 
