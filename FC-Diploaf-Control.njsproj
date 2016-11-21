@@ -62,6 +62,7 @@
     <Content Include="views\config.jade" />
     <Content Include="views\live.jade" />
     <Content Include="views\referee.jade" />
+    <Content Include="views\referee2.jade" />
     <Content Include="views\remote.jade" />
     <Content Include="views\about.jade" />
     <Content Include="views\index.jade" />

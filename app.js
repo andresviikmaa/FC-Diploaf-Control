@@ -111,6 +111,7 @@ app.get('/config', function (req, res) {
 });
 app.get('/live', routes.live);
 app.get('/referee', routes.referee);
+app.get('/referee2', routes.referee2);
 app.get('/mainboard', function (req, res) {
 
     console.log(req.query.cmd);
@@ -153,6 +154,16 @@ io.sockets.on('connection', function (socket) {
         client.send(buf1, 50022, 'localhost', (err) => {
         });
     });
+    socket.on('referee2', function (message) {
+        
+        var buf1 = Buffer.from(message);
+        client.send(buf1, 8042, 'localhost', (err) => {
+        });
+        // simulator
+        client.send(buf1, 50022, 'localhost', (err) => {
+        });
+    });
+
 });
 web.listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
