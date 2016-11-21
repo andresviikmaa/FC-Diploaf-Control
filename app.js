@@ -36,7 +36,7 @@ var robotState = {
 console.log("UDP part");
 var SERVER_PORT = hostname == "Loafdoodle" ? 30001 : 30000;
 var CLIENT_PORT = hostname == "Loafdoodle" ? 30000 : 30001;
-var HOST = '127.0.0.1';
+var HOST = '0.0.0.0';
 
 var dgram = require('dgram');
 var server = dgram.createSocket('udp4');
