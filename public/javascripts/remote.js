@@ -20,7 +20,6 @@
     var tiltLR = 0;
     var tiltFB = 0;
     var dir = 0;
-
     var speed = { x: 0, y: 0 };
     var wheelAngles = [
         { x: -Math.sin(45.0 / 180 * Math.PI), y: Math.cos(45.0 / 180 * Math.PI) },
@@ -44,15 +43,28 @@
         } else {
            // document.getElementById("dmEvent").innerHTML = "Not supported."
         }
+		$("#charge").click(function(){
+			if (enabled)
+			socket.emit("mainboard", "charge");
+		});
+		$("#kick").click(function(){
+			if (enabled)
+			socket.emit("mainboard", "kick:1000");
+		});
     }
     $('.enable').click(function (e) {
-        var el = $(this).parent;
+        var el = $(this);
         if (!enabled) {
-            //el.removeClass('disabled');
+            el.removeClass('btn-primary').addClass('btn-secondary');
             enabled = true;
+			socket.emit("mainboard", "fs0");
+			socket.emit("mainboard", "speeds:0:0:0:0:0");
         } else {
+            el.addClass('btn-primary').removeClass('btn-secondary');
             //el.addClass('disabled');
             enabled = false;
+			socket.emit("mainboard", "fs1");
+			socket.emit("mainboard", "speeds:0:0:0:0:0");
         }
 		speed = { x: 0, y: 0 };
     });
@@ -98,7 +110,8 @@
             var w2 = -parseInt(wheelAngles[1].x * speed.x + wheelAngles[1].y * speed.y);
             var w3 = parseInt(wheelAngles[3].x * speed.x + wheelAngles[3].y * speed.y);
             var w4 = parseInt(wheelAngles[2].x * speed.x + wheelAngles[2].y * speed.y);
-            var speeds = "speeds:" + w1 + ":" + w2 + ":" + w3 + ":" + w4 + ":" +"0";
+			var w5 = $("#tribbler").val();
+            var speeds = "speeds:" + w1 + ":" + w2 + ":" + w3 + ":" + w4 + ":" +w5;
            // $.get('/mainboard?cmd=speeds:' + speeds);
             socket.emit("mainboard", speeds);
             last_acc = acceleration;
@@ -106,7 +119,7 @@
             $("#w2").slider('setValue', w2);
             $("#w3").slider('setValue', w3);
             $("#w4").slider('setValue', w4);
-            $("#w5").slider('setValue', w5);
+            //$("#w5").slider('setValue', w5);
         }
     }, 300);
 
