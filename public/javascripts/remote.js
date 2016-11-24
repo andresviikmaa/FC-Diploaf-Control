@@ -47,10 +47,18 @@
 			if (enabled)
 			socket.emit("mainboard", "charge");
 		});
-		$("#kick").click(function(){
-			if (enabled)
-			socket.emit("mainboard", "kick:1000");
-		});
+        $("#tribl").click(function () {
+            if (enabled)
+                $("#tribbler").slider("setValue", -3000);
+        });
+        $("#kick").click(function () {
+            if (enabled)
+                socket.emit("mainboard", "kick:1600");
+        });
+        $("#kick2").click(function () {
+            if (enabled)
+                socket.emit("mainboard", "kick:1000");
+        });
     }
     $('.enable').click(function (e) {
         var el = $(this);
