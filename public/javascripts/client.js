@@ -45,7 +45,8 @@ var FieldState = {
     ballCount: 6,
     closestBall: 7,
     closestBallInFront: 8,
-	collisionRange: 9
+    closestBallInTribbler: 9,
+	collisionRange: 10
 
 };
 var lastRunMode = RunMode.MODE_IDLE;
@@ -92,6 +93,7 @@ socket.on('fieldstate', function (data) {
     $("#ballCount").html(data.data[FieldState.ballCount]);
     $("#closestBall").html(data.data[FieldState.closestBall]);
     $("#closestBallInFront").html(data.data[FieldState.closestBallInFront]);
+    $("#closestBallInTribbler").html(data.data[FieldState.closestBallInTribbler]);
     $("#collisionRange").html(data.data[FieldState.collisionRange] + ":" + data.data[FieldState.collisionRange + 1]);
     printObjectPosition("#blueGate", data.gates[0]);
     printObjectPosition("#yellowGate", data.gates[1]);

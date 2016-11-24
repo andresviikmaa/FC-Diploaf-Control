@@ -50,7 +50,7 @@ server.on('listening', function () {
 
 server.on('message', function (message, remote) {
     if (message[0] == 0) {
-        fieldState.data = cpaker.Unpack("<II BBBB BBBx dd", message, 0);
+        fieldState.data = cpaker.Unpack("<II BBBB BBBB dd", message, 0);
         fieldState.partner = cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36);
         fieldState.gates = [cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, 36 + 80), cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, 36 + 80 + 96)];
         fieldState.oponents = [cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36 + 80 + 96 + 96), cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36 + 80 + 96 + 96 + 80)];
