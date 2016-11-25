@@ -34,7 +34,6 @@ var liveFeed = {
     //liveFeed.yDis = height/liveFeed.divisions;
                 
     // All pink, baby
-    this.ctx.fillStyle = "#EA80B0";
   
     // Random starting position
     this.posX = Math.floor(Math.random() * this.divisions);
@@ -49,10 +48,12 @@ var liveFeed = {
         
   },
   
-  drawSquare: function(x, y) {
+    drawSquare: function (y, x, color) {
+        this.ctx.fillStyle = color;
+
         // Actually draw it
         var xx = x/5 + liveFeed.canvas.width / 2;
-        var yy = y/5 + liveFeed.canvas.height / 2;
+        var yy = -y/5 + liveFeed.canvas.height / 2;
     liveFeed.ctx.fillRect(xx,yy,5, 5);
     
     // Record it in memory
@@ -60,8 +61,11 @@ var liveFeed = {
   },
     update: function () {
         if (window.fieldState == undefined) return;
+        liveFeed.ctx.clearRect(0, 0, liveFeed.canvas.width, liveFeed.canvas.height);
         for(var i=0; i<12;i++)
-            liveFeed.drawSquare(window.fieldState.balls[i][6], window.fieldState.balls[i][7]);
+            liveFeed.drawSquare(window.fieldState.balls[i][6], window.fieldState.balls[i][7], "orange");
+        liveFeed.drawSquare(window.fieldState.gates[0][6], window.fieldState.gates[0][7], "blue");
+        liveFeed.drawSquare(window.fieldState.gates[1][6], window.fieldState.gates[1][7], "yellow");
   },
 
   

@@ -102,7 +102,10 @@ socket.on('fieldstate', function (data) {
     printObjectPosition("#opponent1", data.oponents[0]);
     printObjectPosition("#opponent2", data.oponents[1]);
     for (var i = 0; i < 12; i++) {
-        printObjectPosition("#ball"+i, data.balls[i]);
+        printObjectPosition("#ball" + i, data.balls[i]);
+    }
+    for (var i = 0; i < 4; i++) {
+        printObjectPosition("#fball" + i, data.frontBalls[i]);
     }
     //
     //ballCount: 6,

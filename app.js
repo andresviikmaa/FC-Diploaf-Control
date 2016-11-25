@@ -28,7 +28,8 @@ requestify.post('http://robotiina.zed.ee/ip.php',  data)
 
 var platform = os.platform()
 var fieldState = {
-    balls: Array(15)
+    balls: Array(15),
+    frontBalls: Array(15)
 }
 var robotState = {
     
@@ -58,6 +59,10 @@ server.on('message', function (message, remote) {
         var s = 36 + 80 + 96 + 96 + 80 + 80 + 80; // 548
         for (var i = 0; i < 15; i++) { // 1440
             fieldState.balls[i] = cpaker.Unpack("<Bxxx ddd dd dd IBxxxd", message, s + i * 96);
+        }
+        s += 1440;
+        for (var i = 0; i < 15; i++) { // 1440
+            fieldState.frontBalls[i] = cpaker.Unpack("<Bxxx ddd dd dd IBxxxd", message, s + i * 96);
         }
         //console.log(data);
         if (io != null) {

@@ -25,7 +25,13 @@ block content
             .col-xs-1#gateObstructed x
             .col-xs-5 
                 b closestBallInFront
-            .col-xs-1#closestBallInFront x
+            .col-xs-1#closestBallInFront x 
+            .col-xs-5 
+                b -
+            .col-xs-1#gateObstructed -
+            .col-xs-5 
+                b closestBallInTribbler
+            .col-xs-1#closestBallInTribbler x
         .row
             .col-md-8
                 canvas#liveFeed.col-md-12(style="border:1px solid red")
@@ -112,6 +118,18 @@ block content
                         - for (var i = 0; i < 12; ++i) {
                             tr(id= "ball"+i)
                                 th= "ball "+i
+                                td.valid - 
+                                td.distance -
+                                td.angle -
+                                td.heading -
+                                td.fx -
+                                td.fy -
+                                td.rx -
+                                td.ry -
+                        - }
+                        - for (var i = 0; i < 4; ++i) {
+                            tr(id= "fball"+i)
+                                th= "fball "+i
                                 td.valid - 
                                 td.distance -
                                 td.angle -
