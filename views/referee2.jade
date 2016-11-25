@@ -62,7 +62,7 @@ block content
 
 block scripts
     script.
-        $("button[data-cmd]").submit(function(){
+        $("button[data-cmd]").click(function(){
             var field = $('input[name=field]:checked').val();
             var team = $('input[name=team]:checked').val();
             var robot = $('input[name=robot]:checked').val();

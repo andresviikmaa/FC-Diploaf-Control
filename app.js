@@ -58,11 +58,12 @@ server.on('message', function (message, remote) {
         fieldState.self = cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36 + 80 + 96 + 96 + 80 + 80)
         var s = 36 + 80 + 96 + 96 + 80 + 80 + 80; // 548
         for (var i = 0; i < 15; i++) { // 1440
-            fieldState.balls[i] = cpaker.Unpack("<Bxxx ddd dd dd IBxxxd", message, s + i * 96);
+           // console.log(message[s + i * 96]);
+            fieldState.balls[i] = cpaker.Unpack("<Bxxx ddd dd dd dd BBxx d", message, s + i * 96);
         }
         s += 1440;
         for (var i = 0; i < 15; i++) { // 1440
-            fieldState.frontBalls[i] = cpaker.Unpack("<Bxxx ddd dd dd IBxxxd", message, s + i * 96);
+            fieldState.frontBalls[i] = cpaker.Unpack("<Bxxx ddd dd dd dd BBxx d", message, s + i * 96);
         }
         //console.log(data);
         if (io != null) {
@@ -72,7 +73,12 @@ server.on('message', function (message, remote) {
         if (io != null) {
             io.sockets.emit('robotstate', cpaker.Unpack("<II BBBB BBB BB", message, 0));
         }
+    } else if (message[0] == 30) {
+        if (io != null) {
+            io.sockets.emit('statemachine', message.toString('ascii', 1));
+        }
     }
+
 
 });
 
@@ -139,7 +145,7 @@ io.sockets.on('connection', function (socket) {
         var data = new Buffer("--");
         data[0] = command.PLAY_MODE;
         data[1] = parseInt(message);
-        client.send(data, 0, data.length, CLIENT_PORT, "localhost", function (err, bytes) {
+        client.send(data, 0, data.length, CLIENT_PORT, "192.168.42.11", function (err, bytes) {
             if (err) throw err;
             console.log('UDP message sent to:' + CLIENT_PORT);
         });
@@ -155,7 +161,7 @@ io.sockets.on('connection', function (socket) {
     });
     socket.on('referee', function (message) {
         var buf1 = Buffer.from(message);
-        client.send(buf1, 8042, 'localhost', (err) => {
+        client.send(buf1, 8042, '192.168.42.11', (err) => {
         });
         // simulator
         client.send(buf1, 50022, 'localhost', (err) => {

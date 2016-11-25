@@ -113,7 +113,9 @@ socket.on('fieldstate', function (data) {
     //closestBallInFront: 8,
 	//collisionRange: 9
 });
-
+socket.on('statemachine', function (data) {
+    $("#statemachine").text(data);
+});
 socket.on('robotstate', function (data) {
     pingPong = true;
     if (lastRunMode != data[RobotState.runMode]) {

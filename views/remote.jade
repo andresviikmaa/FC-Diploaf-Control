@@ -45,7 +45,11 @@ block scripts
   script(src='/javascripts/colorwheel.js')
   script.
     colorwheel = Raphael.colorwheel($(".colorwheel")[0],150);
-    colorwheel.onchange(function(){
+    colorwheel.onchange(function(rgb){
+        hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+        console.log(rgb, hsl);
+        speed.x = 0
+        speed.y = (hsl[1] - 0.5) * 300;
     }).color("#864343");
     $(".slider").slider({
       min: -15000,

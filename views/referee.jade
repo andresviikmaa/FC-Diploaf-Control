@@ -9,21 +9,21 @@ block content
                         legend.col-form-legend.col-sm-2 Choose Field and Team
                         .col-sm-10
                             .form-check
-                                label.form-check-inline(for="fieldA")
-                                    input(type="radio" name="field" id="fieldA" value="A" checked)
+                                label.form-check-inline(for="reffieldA")
+                                    input(type="radio" name="reffield" id="reffieldA" value="A" checked)
                                     span &nbsp; Field A&nbsp;&nbsp;&nbsp;
                                 label.form-check-inline(for="fieldB")
-                                    input(type="radio" name="field" id="fieldB" value="B")
+                                    input(type="radio" name="reffield" id="reffieldB" value="B")
                                     span &nbsp; Field B
                             .form-check
-                                label.form-check-inline(for="robotA")
-                                    input(type="radio" name="robot" id="robotA" value="A")
+                                label.form-check-inline(for="refrobotA")
+                                    input(type="radio" name="refrobot" id="refrobotA" value="A")
                                     span &nbsp; Robot A&nbsp;&nbsp;&nbsp;
-                                label.form-check-inline(for="robotB")
-                                    input(type="radio" name="robot" id="robotB" value="B")
+                                label.form-check-inline(for="refrobotB")
+                                    input(type="radio" name="refrobot" id="refrobotB" value="B")
                                     span &nbsp; Robot B&nbsp;&nbsp;&nbsp;
-                                label.form-check-inline(for="robotX")
-                                    input(type="radio" name="robot" id="robotX" value="X" checked)
+                                label.form-check-inline(for="refrobotX")
+                                    input(type="radio" name="refrobot" id="refrobotX" value="X" checked)
                                     span &nbsp; Robot X
       
          .row
@@ -35,10 +35,10 @@ block content
                 button.btn(data-cmd="PING-----") PING
 block scripts
     script.
-        $("form").submit(function(){
-            var field = $('input[name=field]:checked').val();
-            var robot = $('input[name=robot]:checked').val();
-            var cmd = $('select').val();
+        $("button[data-cmd]").click(function(){
+            var field = $('input[name=reffield]:checked').val();
+            var robot = $('input[name=refrobot]:checked').val();
+            var cmd = $(this).data('cmd');
             socket.emit('referee', "<ref:a"+ field + robot + cmd + ">");
             return false;
         });
