@@ -28,7 +28,8 @@ requestify.post('http://robotiina.zed.ee/ip.php',  data)
 
 var platform = os.platform()
 var fieldState = {
-    balls: Array(15)
+    balls: Array(15),
+    frontBalls: Array(15)
 }
 var robotState = {
     
@@ -59,6 +60,10 @@ server.on('message', function (message, remote) {
         for (var i = 0; i < 15; i++) { // 1440
             fieldState.balls[i] = cpaker.Unpack("<Bxxx ddd dd dd IBxxxd", message, s + i * 96);
         }
+        s += 1440;
+        for (var i = 0; i < 15; i++) { // 1440
+            fieldState.frontBalls[i] = cpaker.Unpack("<Bxxx ddd dd dd IBxxxd", message, s + i * 96);
+        }
         //console.log(data);
         if (io != null) {
             io.sockets.emit('fieldstate', fieldState);
@@ -67,7 +72,12 @@ server.on('message', function (message, remote) {
         if (io != null) {
             io.sockets.emit('robotstate', cpaker.Unpack("<II BBBB BBB BB", message, 0));
         }
+    } else if (message[0] == 30) {
+        if (io != null) {
+            io.sockets.emit('statemachine', message.toString('ascii', 1));
+        }
     }
+
 
 });
 

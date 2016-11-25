@@ -18,21 +18,28 @@ block content
                 b obstacle Near Ball
             .col-xs-1#obstacleNearBall  x
             .col-xs-5 
-                b closestBall
+                b(style="color:red") closestBall
             .col-xs-1#closestBall x
             .col-xs-5 
                 b gateObstructed
             .col-xs-1#gateObstructed x
             .col-xs-5 
-                b closestBallInFront
+                b(style="color:brown") closestBallInFront
             .col-xs-1#closestBallInFront x
+            .col-xs-5 
+                b StateMachine: 
+                span#statemachine
+            .col-xs-1 
+            .col-xs-5 
+                b closestBallInTribbler
+            .col-xs-1#closestBallInTribbler x
         .row
             .col-md-8
                 canvas#liveFeed.col-md-12(style="border:1px solid red")
                 .col-md-12.btn-group.text-center
-                    button.btn.btn-primary#polar Polar
-                    button.btn.btn-secondary#raw Raw pixels
-                    button.btn.btn-secondary#field Field
+                    button#polar.btn.btn-secondary Polar
+                    button#raw.btn.btn-primary Raw pixels
+                    button#field.btn.btn-secondary Field
             .col-md-4
                 table(border=1)
                     thead
@@ -121,6 +128,38 @@ block content
                                 td.rx -
                                 td.ry -
                         - }
+                        - for (var i = 0; i < 4; ++i) {
+                            tr(id= "fball"+i)
+                                th= "fball "+i
+                                td.valid - 
+                                td.distance -
+                                td.angle -
+                                td.heading -
+                                td.fx -
+                                td.fy -
+                                td.rx -
+                                td.ry -
+                        - }
 
 block scripts
     script(src="/javascripts/live.js")
+    script.
+        window.liveMode = 2;
+        $("raw").click(function(){
+            $("#raw").addClass("btn-primary").removeClass("btn-secondary");
+            $("#polar").addClass("btn-secondary").removeClass("btn-secondary");
+            $("#field").addClass("btn-secondary").removeClass("btn-secondary");
+            window.liveMode = 2;
+        });
+        $("polar").click(function(){
+            $("#raw").addClass("btn-secondary").removeClass("btn-primary");
+            $("#polar").addClass("btn-primary").removeClass("btn-secondary");
+            $("#field").addClass("btn-secondary").removeClass("btn-primary");
+            window.liveMode = 1;
+        });
+        $("field").click(function(){
+            $("#raw").addClass("btn-secondary").removeClass("btn-primary");
+            $("#polar").addClass("btn-secondary").removeClass("btn-primary");
+            $("#field").addClass("btn-primary").removeClass("btn-secondary");
+            window.liveMode = 2;
+        });
