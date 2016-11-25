@@ -20,6 +20,7 @@
     var tiltLR = 0;
     var tiltFB = 0;
     var dir = 0;
+	var kick = 0;
     var speed = { x: 0, y: 0 };
     var wheelAngles = [
         { x: -Math.sin(45.0 / 180 * Math.PI), y: Math.cos(45.0 / 180 * Math.PI) },
@@ -49,15 +50,16 @@
 		});
         $("#tribl").click(function () {
             if (enabled)
-                $("#tribbler").slider("setValue", -3000);
+                $("#tribbler").slider("setValue", -6000);
         });
         $("#kick").click(function () {
             if (enabled)
-                socket.emit("mainboard", "kick:1600");
+                socket.emit("mainboard", "kick:5000");
         });
         $("#kick2").click(function () {
-            if (enabled)
-                socket.emit("mainboard", "kick:1000");
+            if (enabled) {
+                kick =1;
+			}
         });
     }
     $('.enable').click(function (e) {
@@ -114,14 +116,29 @@
     }
     setInterval(function () {
         if (enabled) {
-            var w1 = -parseInt(wheelAngles[0].x * speed.x + wheelAngles[0].y * speed.y);
-            var w2 = -parseInt(wheelAngles[1].x * speed.x + wheelAngles[1].y * speed.y);
-            var w3 = parseInt(wheelAngles[3].x * speed.x + wheelAngles[3].y * speed.y);
-            var w4 = parseInt(wheelAngles[2].x * speed.x + wheelAngles[2].y * speed.y);
+			//speed.x = 300;
+			//speed.y = -0;
+            //var w2 = -300;//parseInt(wheelAngles[0].x * speed.x + wheelAngles[0].y * speed.y);
+            //var w4 = -300;//parseInt(wheelAngles[1].x * speed.x + wheelAngles[1].y * speed.y);
+            //var w3 = 300;//parseInt(wheelAngles[2].x * speed.x + wheelAngles[2].y * speed.y);
+            //var w1 = -300;//parseInt(wheelAngles[3].x * speed.x + wheelAngles[3].y * speed.y);
+            var w2 = parseInt(wheelAngles[0].x * speed.y + wheelAngles[0].y * speed.x);
+            var w4 = -parseInt(wheelAngles[1].x * speed.y + wheelAngles[1].y * speed.x);
+            var w3 = parseInt(wheelAngles[2].x * speed.y + wheelAngles[2].y * speed.x);
+            var w1 = parseInt(wheelAngles[3].x * speed.y + wheelAngles[3].y * speed.x);
 			var w5 = $("#tribbler").val();
+			if(kick){
+				w5=0;
+			}
             var speeds = "speeds:" + w1 + ":" + w2 + ":" + w3 + ":" + w4 + ":" +w5;
            // $.get('/mainboard?cmd=speeds:' + speeds);
             socket.emit("mainboard", speeds);
+			if(kick){
+				socket.emit("mainboard", "kick:5000");
+				kick = false;
+				$("#tribbler").slider("setValue", 0);
+
+			}
             last_acc = acceleration;
             $("#w1").slider('setValue', w1);
             $("#w2").slider('setValue', w2);
