@@ -92,6 +92,8 @@ var command = {
     COMMAND_SET_CONF: 11,
     COMMAND_MANUAL_CONTROL: 20,
     COMMAND_STATEMACHINE_STATE: 30,
+    COMMAND_DEBUG: 100,
+    COMMAND_DEBUG_STEP: 101,
 }
 console.log("UI part");
 
@@ -146,6 +148,40 @@ io.sockets.on('connection', function (socket) {
         data[0] = command.PLAY_MODE;
         data[1] = parseInt(message);
         client.send(data, 0, data.length, CLIENT_PORT, "192.168.42.11", function (err, bytes) {
+            if (err) throw err;
+            console.log('UDP message sent to:' + CLIENT_PORT);
+        });
+        client.send(data, 0, data.length, CLIENT_PORT, "127.0.0.1", function (err, bytes) {
+            if (err) throw err;
+            console.log('UDP message sent to:' + CLIENT_PORT);
+        });
+    });
+    socket.on('debug', function (message) {
+        //console.log(message);
+
+        var data = new Buffer("--");
+        data[0] = command.COMMAND_DEBUG;
+        data[1] = parseInt(message);
+        client.send(data, 0, data.length, CLIENT_PORT, "192.168.42.11", function (err, bytes) {
+            if (err) throw err;
+            console.log('UDP message sent to:' + CLIENT_PORT);
+        });
+        client.send(data, 0, data.length, CLIENT_PORT, "127.0.0.1", function (err, bytes) {
+            if (err) throw err;
+            console.log('UDP message sent to:' + CLIENT_PORT);
+        });
+    });
+    socket.on('debug_step', function (message) {
+        //console.log(message);
+
+        var data = new Buffer("--");
+        data[0] = command.COMMAND_DEBUG_STEP;
+        data[1] = parseInt(message);
+        client.send(data, 0, data.length, CLIENT_PORT, "192.168.42.11", function (err, bytes) {
+            if (err) throw err;
+            console.log('UDP message sent to:' + CLIENT_PORT);
+        });
+        client.send(data, 0, data.length, CLIENT_PORT, "127.0.0.1", function (err, bytes) {
             if (err) throw err;
             console.log('UDP message sent to:' + CLIENT_PORT);
         });

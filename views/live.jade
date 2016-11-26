@@ -37,10 +37,13 @@ block content
         .row
             .col-md-8
                 canvas#liveFeed.col-md-12(style="border:1px solid red")
-                .col-md-12.btn-group.text-center
-                    button#polar.btn.btn-secondary Polar
-                    button#raw.btn.btn-primary Raw pixels
-                    button#field.btn.btn-secondary Field
+                .col-md-6.btn-group.text-center
+                            button#polar.btn.btn-secondary Polar
+                            button#raw.btn.btn-primary Raw pixels
+                            button#field.btn.btn-secondary Field
+                .col-md-6.btn-group.text-center
+                            button#debug.btn.btn-secondary Debug Mode
+                            button#debug_step.btn.btn-secondary Step
             .col-md-4
                 table(border=1)
                     thead
@@ -146,21 +149,35 @@ block scripts
     script(src="/javascripts/live.js")
     script.
         window.liveMode = 2;
-        $("raw").click(function(){
+        $("#raw").click(function(){
             $("#raw").addClass("btn-primary").removeClass("btn-secondary");
             $("#polar").addClass("btn-secondary").removeClass("btn-secondary");
             $("#field").addClass("btn-secondary").removeClass("btn-secondary");
             window.liveMode = 2;
         });
-        $("polar").click(function(){
+        $("#polar").click(function(){
             $("#raw").addClass("btn-secondary").removeClass("btn-primary");
             $("#polar").addClass("btn-primary").removeClass("btn-secondary");
             $("#field").addClass("btn-secondary").removeClass("btn-primary");
             window.liveMode = 1;
         });
-        $("field").click(function(){
+        $("#field").click(function(){
             $("#raw").addClass("btn-secondary").removeClass("btn-primary");
             $("#polar").addClass("btn-secondary").removeClass("btn-primary");
             $("#field").addClass("btn-primary").removeClass("btn-secondary");
             window.liveMode = 2;
+        });
+        $("#debug").click(function(){
+            if($("#debug").hasClass("btn-primary")){
+                socket.emit("debug",0);
+                $("#debug").addClass("btn-secondary").removeClass("btn-primary");
+            } else {
+                socket.emit("debug",1);
+                $("#debug").addClass("btn-primary").removeClass("btn-secondary");
+            }
+        });
+        $("#debug_step").click(function(){
+            if($("#debug").hasClass("btn-primary")){
+                socket.emit("debug_step",2);
+            }
         });
