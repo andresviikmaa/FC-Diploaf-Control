@@ -58,12 +58,12 @@ server.on('message', function (message, remote) {
         
         var s = 0;
         fieldState.data = cpaker.Unpack("<II BBBB BBBB dd", message, s);                                s += 32;
-        fieldState.partner = cpaker.Unpack("<Bxxx ddd dd dd dd", message, s);                           s += 80;    
-        fieldState.gates = [cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, s),
-                            cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, s + 96)];                   s += 2 * 96; 
-        fieldState.oponents = [cpaker.Unpack("<Bxxx ddd dd dd dd", message, s),
-                               cpaker.Unpack("<Bxxx ddd dd dd dd", message, s + 80)];                   s += 2 * 80; 
-        fieldState.self = cpaker.Unpack("<BBxx ddd dd dd dd hhhh Bxxx ", message, s);                   s += 92;
+        fieldState.partner = cpaker.Unpack("<Bxxx xxxx ddd dd dd dd", message, s);                           s += 80;    
+        fieldState.gates = [cpaker.Unpack("<Bxxx xxxx ddd dd dd dd ", message, s),
+                            cpaker.Unpack("<Bxxx xxxx ddd dd dd dd ", message, s + 96)];                   s += 2 * 96; 
+        fieldState.oponents = [cpaker.Unpack("<Bxxx xxxx ddd dd dd dd", message, s),
+                               cpaker.Unpack("<Bxxx xxxx ddd dd dd dd", message, s )];                   s += 2 * 80; 
+        fieldState.self = cpaker.Unpack("<Bxxx xxxx ddd dd dd dd hhhh Bxxx ", message, s);                   s += 92;
         
         
         s = 556;
