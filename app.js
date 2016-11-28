@@ -42,6 +42,8 @@ var HOST = '0.0.0.0';
 var dgram = require('dgram');
 var server = dgram.createSocket('udp4');
 var client = dgram.createSocket('udp4');
+var endpoint = null;
+
 var io = null;
 
 server.on('listening', function () {
@@ -50,13 +52,21 @@ server.on('listening', function () {
 });
 
 server.on('message', function (message, remote) {
-    if (message[0] == 0) {
-        fieldState.data = cpaker.Unpack("<II BBBB BBBB dd", message, 0);
-        fieldState.partner = cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36);
-        fieldState.gates = [cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, 36 + 80), cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, 36 + 80 + 96)];
-        fieldState.oponents = [cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36 + 80 + 96 + 96), cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36 + 80 + 96 + 96 + 80)];
-        fieldState.self = cpaker.Unpack("<Bxxx ddd dd dd dd", message, 36 + 80 + 96 + 96 + 80 + 80)
-        var s = 36 + 80 + 96 + 96 + 80 + 80 + 80; // 548
+    endpoint = remote;
+    var size = message[1];
+    if (message[0] == 0) { //3440
+        
+        var s = 0;
+        fieldState.data = cpaker.Unpack("<II BBBB BBBB dd", message, s);                                s += 32;
+        fieldState.partner = cpaker.Unpack("<Bxxx ddd dd dd dd", message, s);                           s += 80;    
+        fieldState.gates = [cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, s),
+                            cpaker.Unpack("<Bxxx ddd dd dd dd dd", message, s + 96)];                   s += 2 * 96; 
+        fieldState.oponents = [cpaker.Unpack("<Bxxx ddd dd dd dd", message, s),
+                               cpaker.Unpack("<Bxxx ddd dd dd dd", message, s + 80)];                   s += 2 * 80; 
+        fieldState.self = cpaker.Unpack("<BBxx ddd dd dd dd hhhh Bxxx ", message, s);                   s += 92;
+        
+        
+        s = 556;
         for (var i = 0; i < 15; i++) { // 1440
            // console.log(message[s + i * 96]);
             fieldState.balls[i] = cpaker.Unpack("<Bxxx ddd dd dd dd BBxx d", message, s + i * 96);
@@ -142,49 +152,41 @@ io = require('socket.io').listen(web);
 
 io.sockets.on('connection', function (socket) {
     socket.on('run_mode', function (message) {
+        if (endpoint == null) return;
         //console.log(message);
         
         var data = new Buffer("--");
         data[0] = command.PLAY_MODE;
         data[1] = parseInt(message);
-        client.send(data, 0, data.length, CLIENT_PORT, "192.168.42.11", function (err, bytes) {
-            if (err) throw err;
-            console.log('UDP message sent to:' + CLIENT_PORT);
-        });
-        client.send(data, 0, data.length, CLIENT_PORT, "127.0.0.1", function (err, bytes) {
+        client.send(data, 0, data.length, CLIENT_PORT, endpoint.address, function (err, bytes) {
             if (err) throw err;
             console.log('UDP message sent to:' + CLIENT_PORT);
         });
     });
     socket.on('debug', function (message) {
         //console.log(message);
+        if (endpoint == null) return;
 
         var data = new Buffer("--");
         data[0] = command.COMMAND_DEBUG;
         data[1] = parseInt(message);
-        client.send(data, 0, data.length, CLIENT_PORT, "192.168.42.11", function (err, bytes) {
-            if (err) throw err;
-            console.log('UDP message sent to:' + CLIENT_PORT);
-        });
-        client.send(data, 0, data.length, CLIENT_PORT, "127.0.0.1", function (err, bytes) {
+        client.send(data, 0, data.length, CLIENT_PORT, endpoint.address, function (err, bytes) {
             if (err) throw err;
             console.log('UDP message sent to:' + CLIENT_PORT);
         });
     });
     socket.on('debug_step', function (message) {
         //console.log(message);
+        if (endpoint == null) return;
 
         var data = new Buffer("--");
         data[0] = command.COMMAND_DEBUG_STEP;
         data[1] = parseInt(message);
-        client.send(data, 0, data.length, CLIENT_PORT, "192.168.42.11", function (err, bytes) {
+        client.send(data, 0, data.length, CLIENT_PORT, endpoint.address, function (err, bytes) {
             if (err) throw err;
             console.log('UDP message sent to:' + CLIENT_PORT);
         });
-        client.send(data, 0, data.length, CLIENT_PORT, "127.0.0.1", function (err, bytes) {
-            if (err) throw err;
-            console.log('UDP message sent to:' + CLIENT_PORT);
-        });
+
     });
     socket.on('mainboard', function (message) {
 		console.log(message);
@@ -215,12 +217,13 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('conf_change', function (message) {
         //console.log(message);
+        if (endpoint == null) return;
 
         var data = new Buffer("---"+message[0]);
         data[0] = command.COMMAND_SET_CONF;
         data[1] = parseInt(message[1]);
         data[2] = message[1].charCodeAt(0);
-        client.send(data, 0, data.length, CLIENT_PORT, "localhost", function (err, bytes) {
+        client.send(data, 0, data.length, CLIENT_PORT, endpoint.address, function (err, bytes) {
             if (err) throw err;
             console.log('UDP message sent to:' + CLIENT_PORT);
         });
