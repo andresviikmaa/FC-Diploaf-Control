@@ -66,14 +66,14 @@ server.on('message', function (message, remote) {
         fieldState.self = cpaker.Unpack("<Bxxx xxxx ddd dd dd dd hhhh Bxxx ", message, s);                   s += 92;
         
         
-        s = 556;
+        s = 560;
         for (var i = 0; i < 15; i++) { // 1440
            // console.log(message[s + i * 96]);
-            fieldState.balls[i] = cpaker.Unpack("<Bxxx ddd dd dd dd BBxx d", message, s + i * 96);
+            fieldState.balls[i] = cpaker.Unpack("<Bxxx xxxx ddd dd dd dd BBxx d", message, s + i * 96);
         }
         s += 1440;
         for (var i = 0; i < 15; i++) { // 1440
-            fieldState.frontBalls[i] = cpaker.Unpack("<Bxxx ddd dd dd dd BBxx d", message, s + i * 96);
+            fieldState.frontBalls[i] = cpaker.Unpack("<Bxxx xxxx ddd dd dd dd BBxx d", message, s + i * 96);
         }
         //console.log(data);
         if (io != null) {
