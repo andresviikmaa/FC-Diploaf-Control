@@ -1,0 +1,75 @@
+﻿extends layout
+
+
+block content
+    form
+        .row
+            .col.text-center
+                .btn-group.run_mode
+                    button.disable_offline.disabled.btn.btn-secondary.runmode(type="button" role="group" data-mode="1") 1 vs 1
+                    button.disable_offline.disabled.btn.btn-primary.runmode(type="button" role="group" data-mode="0").active Idle
+                    button.disable_offline.disabled.btn.btn-secondary.runmode(type="button" role="group" data-mode="2") 2 vs 2
+        .row
+            .col.col-xs-12
+                fieldset.form-group.row
+                    legend.col-form-legend.col-sm-2 Target Gate
+                    .col-sm-10
+                        .form-check
+                            label.form-check-inline(for="gateBlue")
+                                input(type="radio" name="gate" id="gateBlue" value="0")
+                                span &nbsp; Blue&nbsp;&nbsp;&nbsp;
+                            label.form-check-inline(for="gateYellow")
+                                input(type="radio" name="gate" id="gateYellow" value="1")
+                                span &nbsp; Yellow
+                fieldset.form-group.row
+                    legend.col-form-legend.col-sm-2 Robot Color
+                    .col-sm-10
+                        .form-check
+                            label.form-check-inline(for="robotPink")
+                                input(type="radio" name="robot" id="robotPink" value="0")
+                                span &nbsp; Pink&nbsp;&nbsp;&nbsp;
+                            label.form-check-inline(for="robotPurple")
+                                input(type="radio" name="robot" id="robotPurple" value="1")
+                                span &nbsp; Purple
+
+                fieldset.form-group.row
+                    legend.col-form-legend.col-sm-2 Choose Field and Team
+                    .col-sm-10
+                        .form-check
+                            label.form-check-inline(for="fieldA")
+                                input(type="radio" name="field" id="fieldA" value="A")
+                                span &nbsp; Field A&nbsp;&nbsp;&nbsp;
+                            label.form-check-inline(for="fieldB")
+                                input(type="radio" name="field" id="fieldB" value="B")
+                                span &nbsp; Field B
+                        .form-check
+                            label.form-check-inline(for="teamA")
+                                input(type="radio" name="team" id="teamA" value="A")
+                                span &nbsp; Team A&nbsp;&nbsp;&nbsp;
+                            label.form-check-inline(for="teamB")
+                                input(type="radio" name="team" id="teamB" value="B")
+                                span &nbsp; Team B
+                        .form-check
+                            label.form-check-inline(for="markerA")
+                                input(type="radio" name="marker" id="markerA" value="A")
+                                span &nbsp; Robot A&nbsp;&nbsp;&nbsp;
+                            label.form-check-inline(for="markerB")
+                                input(type="radio" name="marker" id="markerB" value="B")
+                                span &nbsp; Robot B 
+                        .form-check
+                            label.form-check-inline(for="markerC")
+                                input(type="radio" name="marker" id="markerC" value="C")
+                                span &nbsp; Robot C&nbsp;&nbsp;&nbsp;
+                            label.form-check-inline(for="markerD")
+                                input(type="radio" name="marker" id="markerD" value="D")
+                                span &nbsp; Robot D
+                 //button.disable_offline.disabled.btn.btn-primary(type="submit") Save
+
+block scripts
+    script.
+        $(".run_mode button").click(function(){
+            socket.emit('run_mode', $(this).data('mode'));
+        });
+        $("input[type=radio]").change(function(){
+            socket.emit('conf_change', [$(this).attr('name'), $(this).val()]);
+        });

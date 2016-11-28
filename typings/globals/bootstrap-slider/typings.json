@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/1f9a2508cfa95d990825dd3cd222d658fd403f79/bootstrap-slider/bootstrap-slider.d.ts",
+    "raw": "registry:dt/bootstrap-slider#4.8.3+20160724063308",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/1f9a2508cfa95d990825dd3cd222d658fd403f79/bootstrap-slider/bootstrap-slider.d.ts"
+  }
+}

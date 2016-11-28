@@ -1,0 +1,73 @@
+﻿extends layout
+block content
+    .container
+      h2 (2v2) commands
+      form
+        .row
+            .col.col-xs-12
+                   fieldset.form-group.row
+                        legend.col-form-legend.col-sm-2 Choose Field and Team
+                        .col-sm-10
+                            .form-check
+                                label.form-check-inline(for="fieldA")
+                                    input(type="radio" name="field" id="fieldA" value="A" checked)
+                                    span &nbsp; Field A&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="fieldB")
+                                    input(type="radio" name="field" id="fieldB" value="B")
+                                    span &nbsp; Field B
+                            .form-check
+                                label.form-check-inline(for="teamA")
+                                    input(type="radio" name="team" id="teamA" value="A")
+                                    span &nbsp; Team A&nbsp;&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="teamB")
+                                    input(type="radio" name="team" id="teamB" value="B")
+                                    span &nbsp; Team B&nbsp;&nbsp;&nbsp;
+                            .form-check
+                                label.form-check-inline(for="robotA")
+                                    input(type="radio" name="robot" id="robotA" value="A")
+                                    span &nbsp; Robot A&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="robotB")
+                                    input(type="radio" name="robot" id="robotB" value="B")
+                                    span &nbsp; Robot B&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="robotX")
+                                    input(type="radio" name="robot" id="robotX" value="X" checked)
+                                    span &nbsp;  X
+      
+         .row
+            .col-xs-6.col-sm-2.text-center
+                button.btn.btn-primary(data-cmd="S" data-B="S") START
+            .col-xs-6.col-sm-2.text-center
+                button.btn.btn-primary(data-cmd="H" data-B="H") STOP
+            .col-xs-6.col-sm-2.text-center
+                button.btn(data-cmd="B" data-B="B") PLACED BALL
+            .col-xs-6.col-sm-2.text-center
+                button.btn(data-cmd="E" data-B="E") END HALF
+         .row
+            .col-xs-6.col-sm-2.text-center
+                button.btn(data-cmd="K" data-B="k") KICKOFF
+            .col-xs-6.col-sm-2.text-center
+                button.btn(data-cmd="D" data-B="d") DIRECT KICK
+            .col-xs-6.col-sm-2.text-center
+                button.btn(data-cmd="I" data-B="i") IND FKICK
+            .col-xs-6.col-sm-2.text-center
+                button.btn(data-cmd="P" data-B="p") PENALTY
+        .row
+            .col-xs-6.col-sm-2.text-center
+                button.btn(data-cmd="A" data-B="A") PING
+            .col-xs-6.col-sm-2.text-center
+                button.btn(data-cmd="G" data-B="g") GOAL
+            .col-xs-6.col-sm-2.text-center
+                button.btn(data-cmd="Y" data-B="y") YELLOW CARD
+
+
+block scripts
+    script.
+        $("button[data-cmd]").click(function(){
+            var field = $('input[name=field]:checked').val();
+            var team = $('input[name=team]:checked').val();
+            var robot = $('input[name=robot]:checked').val();
+            var cmd = team== "A" ? $(this).data('cmd') $(this).data('cmd-B');
+
+            socket.emit('referee', field + robot + cmd);
+            return false;
+        });

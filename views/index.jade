@@ -1,0 +1,19 @@
+﻿extends layout
+
+
+block content
+    h3.status  #{hostname}
+        div
+
+    form
+        .row
+            .col.text-center
+                .btn-group.run_mode
+                    button.disable_offline.disabled.btn.btn-secondary.runmode(type="button" role="group" data-mode="1") 1 vs 1
+                    button.disable_offline.disabled.btn.btn-primary.runmode(type="button" role="group" data-mode="0").active Idle
+                    button.disable_offline.disabled.btn.btn-secondary.runmode(type="button" role="group" data-mode="2") 2 vs 2
+block scripts
+    script.
+        $(".run_mode button").click(function(){
+            socket.emit('run_mode', $(this).data('mode'));
+        });

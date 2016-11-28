@@ -1,0 +1,44 @@
+﻿extends layout
+block content
+    .container
+      h2 (1v1) commands
+      form
+        .row
+            .col.col-xs-12
+                   fieldset.form-group.row
+                        legend.col-form-legend.col-sm-2 Choose Field and Team
+                        .col-sm-10
+                            .form-check
+                                label.form-check-inline(for="reffieldA")
+                                    input(type="radio" name="reffield" id="reffieldA" value="A" checked)
+                                    span &nbsp; Field A&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="fieldB")
+                                    input(type="radio" name="reffield" id="reffieldB" value="B")
+                                    span &nbsp; Field B
+                            .form-check
+                                label.form-check-inline(for="refrobotA")
+                                    input(type="radio" name="refrobot" id="refrobotA" value="A")
+                                    span &nbsp; Robot A&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="refrobotB")
+                                    input(type="radio" name="refrobot" id="refrobotB" value="B")
+                                    span &nbsp; Robot B&nbsp;&nbsp;&nbsp;
+                                label.form-check-inline(for="refrobotX")
+                                    input(type="radio" name="refrobot" id="refrobotX" value="X" checked)
+                                    span &nbsp; Robot X
+      
+         .row
+            .col-xs-6.col-sm-2.text-center
+                button.btn.btn-primary(data-cmd="START----") START
+            .col-xs-6.col-sm-2.text-center
+                button.btn.btn-primary(data-cmd="STOP-----") STOP
+            .col-xs-6.col-sm-2.text-center
+                button.btn(data-cmd="PING-----") PING
+block scripts
+    script.
+        $("button[data-cmd]").click(function(){
+            var field = $('input[name=reffield]:checked').val();
+            var robot = $('input[name=refrobot]:checked').val();
+            var cmd = $(this).data('cmd');
+            socket.emit('referee', "<ref:a"+ field + robot + cmd + ">");
+            return false;
+        });

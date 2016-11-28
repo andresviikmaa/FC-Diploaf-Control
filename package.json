@@ -1,0 +1,17 @@
+{
+  "name": "fc-diploaf-control",
+  "version": "0.0.0",
+  "description": "FC-Diploaf-Control",
+  "main": "app.js",
+  "author": {
+    "name": "andres"
+  },
+  "dependencies": {
+    "express": "3.4.4",
+    "jade": "*",
+    "jspack": "0.0.4",
+    "requestify": "^0.2.5",
+    "socket.io": "^1.5.1",
+    "stylus": "*"
+  }
+}

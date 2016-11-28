@@ -1,0 +1,62 @@
+extends layout
+   
+block content
+    div.container
+    div a
+    .row
+         .col-xs-2
+            input#tribbler.slider(data-slider-min="0" data-slider-max="15000" data-slider-step="1" data-slider-value="0")
+         .col-xs-6
+            .logo#imgLogo
+                //img.logo.disabled( src="/images/html5_logo.png" )
+                .colorwheel
+         .col-xs-1
+            input#w1.slider(data-slider-min="0" data-slider-max="15000" data-slider-step="1" data-slider-value="0")
+         .col-xs-1
+           input#w2.slider(data-slider-min="0" data-slider-max="15000" data-slider-step="1" data-slider-value="0")
+         .col-xs-1
+           input#w3.slider(data-slider-min="0" data-slider-max="15000" data-slider-step="1" data-slider-value="0")
+         .col-xs-1
+           input#w4.slider(data-slider-min="0" data-slider-max="15000" data-slider-step="1" data-slider-value="0")
+    .row
+        .col-xs-2 Tribbler
+        .col-xs-6.text-center
+            .btn-group
+                button#tribl.btn.btn-secondary Start Trib 
+                button.btn.btn-primary.enable Enable
+                button#kick.btn.btn-secondary Kick
+                button#kick2.btn.btn-secondary Stop Trib & Kick 
+        .col-xs-4.text-center Wheels
+           
+            
+block head
+    link(rel='stylesheet', type='text/css', href='/stylesheets/bootstrap-slider.min.css')
+    style.
+        .slider.slider-vertical {
+            height:160px;
+        }
+        body {
+            overflow:hidden;
+        }
+block scripts
+  script(src='/javascripts/remote.js') 
+  script(src='/javascripts/raphael.min.js')
+  script(src='/javascripts/bootstrap-slider.min.js')
+  script(src='/javascripts/colorwheel.js')
+  script.
+    colorwheel = Raphael.colorwheel($(".colorwheel")[0],150);
+    colorwheel.onchange(function(rgb){
+        hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+        console.log(rgb, hsl);
+        speed.x = 0
+        speed.y = (hsl[1] - 0.5) * 300;
+    }).color("#864343");
+    $(".slider").slider({
+      min: -15000,
+      max: 15000,
+      //scale: 'logarithmic',
+      step: 10,
+      orientation: 'vertical',
+      tooltip_position:'left',
+      reversed : true
+    });
