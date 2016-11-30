@@ -19,12 +19,6 @@ data = [];
 data['hostname'] = os.hostname();
 data['network'] = os.networkInterfaces();
 
-var hostname = data['hostname'];
-requestify.post('http://robotiina.zed.ee/ip.php',  data)
-    .then(function (response) {
-        // Get the response body (JSON parsed or jQuery object for XMLs)
-        response.getBody();
-});
 
 var platform = os.platform()
 var fieldState = {
@@ -34,11 +28,11 @@ var fieldState = {
 var robotState = {
     
 }
-master = process.argv.length > 2;
+master = process.argv.length < 3;
 console.log("UDP part");
 var SERVER_PORT = master ? 30001 : 30000;
 var CLIENT_PORT = master ? 30000 : 30001;
-
+var hostname = master ? "DipWookie" : "LoafDoodle";
 var HOST = '0.0.0.0';
 
 var dgram = require('dgram');
@@ -131,11 +125,11 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', function (req, res) {
-    res.render('index', { title: 'FC Diploaf Control Center', hostname: os.hostname()});
+    res.render('index', { title: 'FC Diploaf Control Center', hostname: hostname});
 });
 app.get('/remote', routes.remote);
 app.get('/config', function (req, res) {
-    res.render('config', { title: os.hostname() });
+    res.render('config', { title: hostname });
 });
 app.get('/live', routes.live);
 app.get('/referee', routes.referee);
