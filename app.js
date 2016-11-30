@@ -34,9 +34,11 @@ var fieldState = {
 var robotState = {
     
 }
+master = process.argv.length > 2;
 console.log("UDP part");
-var SERVER_PORT = hostname == "Loafdoodle" ? 30001 : 30000;
-var CLIENT_PORT = hostname == "Loafdoodle" ? 30000 : 30001;
+var SERVER_PORT = master ? 30001 : 30000;
+var CLIENT_PORT = master ? 30000 : 30001;
+
 var HOST = '0.0.0.0';
 
 var dgram = require('dgram');
@@ -53,6 +55,7 @@ server.on('listening', function () {
 
 server.on('message', function (message, remote) {
     endpoint = remote;
+    hostname = endpoint;
     var size = message[1];
     if (message[0] == 0) { //3440
         
