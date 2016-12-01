@@ -175,9 +175,11 @@ block scripts
                 socket.emit("debug",1);
                 $("#debug").addClass("btn-primary").removeClass("btn-secondary");
             }
+            socket.emit("debug_step",2);
+
         });
         $("#debug_step").click(function(){
-            if($("#debug").hasClass("btn-primary")){
+           // if($("#debug").hasClass("btn-primary")){
                 socket.emit("debug_step",2);
-            }
+           // }
         });
