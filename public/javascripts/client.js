@@ -56,9 +56,11 @@ setInterval(function () {
         if (pingPong == false) {
             $(".status").removeClass("online");
             $(".disable_offline").addClass("disabled");
+            $(".disable_online").removeClass("disabled");
         } else {
             $(".status").addClass("online");
             $(".disable_offline").removeClass("disabled");
+            $(".disable_online").addClass("disabled");
         }
     }
     was_online = pingPong;

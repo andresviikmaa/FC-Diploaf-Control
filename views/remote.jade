@@ -2,7 +2,14 @@ extends layout
    
 block content
     div.container
-    div a
+    .row
+        .col-xs-2 Tribbler
+        .col-xs-6.text-center
+            .btn-group.run_mode
+                button.disable_online.btn.btn-primary.controlmode#none(type="button" role="group" data-mode="1").active none
+                button.disable_online.btn.btn-secondary.controlmode#keyboard(type="button" role="group" data-mode="1") keyboard
+                button.disable_online.btn.btn-secondary.controlmode#tilt(type="button" role="group" data-mode="0") tilting
+                //button.disable_online.btn.btn-secondary.controlmode#colorwheel(type="button" role="group" data-mode="2") colorwheel
     .row
          .col-xs-2
             input#tribbler.slider(data-slider-min="0" data-slider-max="15000" data-slider-step="1" data-slider-value="0")
@@ -50,7 +57,9 @@ block scripts
         console.log(rgb, hsl);
         speed.x = 0
         speed.y = (hsl[1] - 0.5) * 300;
+        console.log(speed);
     }).color("#864343");
+
     $(".slider").slider({
       min: -15000,
       max: 15000,

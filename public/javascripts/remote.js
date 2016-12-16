@@ -21,7 +21,7 @@
     var tiltFB = 0;
     var dir = 0;
 	var kick = 0;
-    var speed = { x: 0, y: 0 };
+    var speed = { x: 0, y: 0, r: 0 };
     var wheelAngles = [
         { x: -Math.sin(45.0 / 180 * Math.PI), y: Math.cos(45.0 / 180 * Math.PI) },
         { x: -Math.sin(135.0 / 180 * Math.PI), y: Math.cos(135.0 / 180 * Math.PI) },
@@ -31,19 +31,14 @@
 
     function init() {
         if (window.DeviceOrientationEvent) {
-           // document.getElementById("doEvent").innerHTML = "DeviceOrientation";
-            // Listen for the deviceorientation event and handle the raw data
             window.addEventListener('deviceorientation', deviceOrientationHandler, false);
-        } else {
-            //document.getElementById("doEvent").innerHTML = "Not supported on your device or browser.  Sorry."
         }
         if (window.DeviceMotionEvent) {
-           // document.getElementById("dmEvent").innerHTML = "DeviceMotion";
 
             window.addEventListener('devicemotion', deviceMotionHandler, false);
-        } else {
-           // document.getElementById("dmEvent").innerHTML = "Not supported."
         }
+        window.addEventListener('keyup', keyUpHandler, false);
+       
 		$("#charge").click(function(){
 			if (enabled)
 			socket.emit("mainboard", "charge");
@@ -76,7 +71,7 @@
 			socket.emit("mainboard", "fs1");
 			socket.emit("mainboard", "speeds:0:0:0:0:0");
         }
-		speed = { x: 0, y: 0 };
+		speed = { x: 0, y: 0, r:0 };
     });
     function animate(tiltLR, tiltFB, dir) {
         if (enabled) {
@@ -95,6 +90,50 @@
             doDirection = dir;
 
         }
+    }
+    function keyUpHandler(eventData) {
+        var key = eventData.keyCode;
+        console.log(eventData);
+        switch (key) {
+            case 'a':
+            case 37:
+                if (eventData.ctrlKey)
+                    speed.x += 10;
+                else
+                    speed.r -= 10;
+                break;
+            case 'd':
+            case 39:
+                if (eventData.ctrlKey)
+                    speed.x -= 10;
+                else
+                    speed.r += 10;
+                break;
+            case 'w':
+            case 38:
+                speed.y += 10;
+                break;
+            case 's':
+            case 40:
+                speed.y -= 10;
+                break;
+            case 'q':
+                speed = (0, 0, 0);
+                break;
+            case 'k':
+            case ' ':
+                socket.emit("mainboard", "kick:5000");
+                break;
+            case 'Z':
+                $("#tribbler").slider("setValue", -3000);
+                break;
+            case 'X':
+                $("#tribbler").slider("setValue", 0);
+                break;
+            default:
+                break;
+        }
+
     }
 
     function deviceOrientationHandler(eventData) {
@@ -122,10 +161,10 @@
             //var w4 = -300;//parseInt(wheelAngles[1].x * speed.x + wheelAngles[1].y * speed.y);
             //var w3 = 300;//parseInt(wheelAngles[2].x * speed.x + wheelAngles[2].y * speed.y);
             //var w1 = -300;//parseInt(wheelAngles[3].x * speed.x + wheelAngles[3].y * speed.y);
-            var w2 = parseInt(wheelAngles[0].x * speed.y + wheelAngles[0].y * speed.x);
-            var w4 = -parseInt(wheelAngles[1].x * speed.y + wheelAngles[1].y * speed.x);
-            var w3 = parseInt(wheelAngles[2].x * speed.y + wheelAngles[2].y * speed.x);
-            var w1 = parseInt(wheelAngles[3].x * speed.y + wheelAngles[3].y * speed.x);
+            var w2 = parseInt(wheelAngles[0].x * speed.y + wheelAngles[0].y * speed.x) + speed.r;
+            var w4 = -parseInt(wheelAngles[1].x * speed.y + wheelAngles[1].y * speed.x) + speed.r;
+            var w3 = parseInt(wheelAngles[2].x * speed.y + wheelAngles[2].y * speed.x) + speed.r;
+            var w1 = parseInt(wheelAngles[3].x * speed.y + wheelAngles[3].y * speed.x) + speed.r;
 			var w5 = $("#tribbler").val();
 			if(kick){
 				w5=0;
