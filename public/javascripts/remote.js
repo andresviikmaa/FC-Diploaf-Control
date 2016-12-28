@@ -22,6 +22,7 @@
     var dir = 0;
 	var kick = 0;
     var speed = { x: 0, y: 0, r: 0 };
+	var speedLimit = 500;
     var wheelAngles = [
         { x: -Math.sin(45.0 / 180 * Math.PI), y: Math.cos(45.0 / 180 * Math.PI) },
         { x: -Math.sin(135.0 / 180 * Math.PI), y: Math.cos(135.0 / 180 * Math.PI) },
@@ -37,7 +38,8 @@
 
             window.addEventListener('devicemotion', deviceMotionHandler, false);
         }
-        window.addEventListener('keyup', keyUpHandler, false);
+        window.addEventListener('keydown', keyDownHandler, false);
+		window.addEventListener('keyup', keyUpHandler, false);
        
 		$("#charge").click(function(){
 			if (enabled)
@@ -49,7 +51,7 @@
         });
         $("#kick").click(function () {
             if (enabled)
-                socket.emit("mainboard", "kick:5000");
+                socket.emit("mainboard", "kick:2500");
         });
         $("#kick2").click(function () {
             if (enabled) {
@@ -57,6 +59,7 @@
 			}
         });
     }
+	
     $('.enable').click(function (e) {
         var el = $(this);
         if (!enabled) {
@@ -88,41 +91,52 @@
             doTiltLR = tiltLR;
             doTiltFB = tiltFB;
             doDirection = dir;
-
         }
     }
-    function keyUpHandler(eventData) {
+	
+	function keyUpHandler(eventData) {
+		var key = eventData.keyCode;
+		var keyReleaseToStopDriving = [37, 39, 38, 40];
+		if (keyReleaseToStopDriving.indexOf(key) > -1) {
+			speed = { x: 0, y: 0, r:0 };
+			console.log("Stopping");
+		}
+	}
+	
+    function keyDownHandler(eventData) {
         var key = eventData.keyCode;
-        console.log(eventData);
+        console.log(eventData.keyCode);
+		var acceleration = 30;
         switch (key) {
             case 'a':
             case 37:
                 if (eventData.ctrlKey)
-                    speed.x += 10;
+                    increaseSpeed(acceleration,0,0);
                 else
-                    speed.r -= 10;
+                    increaseSpeed(0,0,-acceleration);
                 break;
             case 'd':
             case 39:
                 if (eventData.ctrlKey)
-                    speed.x -= 10;
+                    increaseSpeed(-acceleration,0,0);
                 else
-                    speed.r += 10;
+                    increaseSpeed(0,0,acceleration);
                 break;
             case 'w':
             case 38:
-                speed.y += 10;
+                increaseSpeed(0,acceleration,0);
                 break;
             case 's':
             case 40:
-                speed.y -= 10;
+                increaseSpeed(0,-acceleration,0);
                 break;
             case 'q':
-                speed = (0, 0, 0);
+                speed = { x: 0, y: 0, r:0 };
                 break;
             case 'k':
-            case ' ':
-                socket.emit("mainboard", "kick:5000");
+            case 75:
+				console.log("kicking");
+                socket.emit("mainboard", "kick:2500");
                 break;
             case 'Z':
                 $("#tribbler").slider("setValue", -3000);
@@ -135,6 +149,17 @@
         }
 
     }
+	
+	function increaseSpeed(x, y ,r) {
+		if (Math.abs(speed.y) >= speedLimit || Math.abs(speed.x) >= speedLimit || Math.abs(speed.r >= speedLimit)) {
+			console.log("speed limit hit");
+			return;
+		}
+		console.log("increasing speeds");
+		speed.x += x;
+		speed.y += y;
+		speed.r += r;
+	}
 
     function deviceOrientationHandler(eventData) {
         // Grab the acceleration including gravity from the results
@@ -154,16 +179,11 @@
         last_acc = acceleration;
     }
     setInterval(function () {
-        if (enabled) {
-			//speed.x = 300;
-			//speed.y = -0;
-            //var w2 = -300;//parseInt(wheelAngles[0].x * speed.x + wheelAngles[0].y * speed.y);
-            //var w4 = -300;//parseInt(wheelAngles[1].x * speed.x + wheelAngles[1].y * speed.y);
-            //var w3 = 300;//parseInt(wheelAngles[2].x * speed.x + wheelAngles[2].y * speed.y);
-            //var w1 = -300;//parseInt(wheelAngles[3].x * speed.x + wheelAngles[3].y * speed.y);
+        if (enabled) {		
+			
             var w2 = parseInt(wheelAngles[0].x * speed.y + wheelAngles[0].y * speed.x) + speed.r;
-            var w4 = -parseInt(wheelAngles[1].x * speed.y + wheelAngles[1].y * speed.x) + speed.r;
-            var w3 = parseInt(wheelAngles[2].x * speed.y + wheelAngles[2].y * speed.x) + speed.r;
+            var w4 = parseInt(wheelAngles[1].x * speed.y + wheelAngles[1].y * speed.x) + speed.r;
+            var w3 = -parseInt(wheelAngles[2].x * speed.y + wheelAngles[2].y * speed.x) + speed.r;
             var w1 = parseInt(wheelAngles[3].x * speed.y + wheelAngles[3].y * speed.x) + speed.r;
 			var w5 = $("#tribbler").val();
 			if(kick){
@@ -185,7 +205,7 @@
             $("#w4").slider('setValue', w4);
             //$("#w5").slider('setValue', w5);
         }
-    }, 300);
+    }, 100);
 
     // Some other fun rotations to try...
     //var rotation = "rotate3d(0,1,0, "+ (tiltLR*-1)+"deg) rotate3d(1,0,0, "+ (tiltFB*-1)+"deg)";
